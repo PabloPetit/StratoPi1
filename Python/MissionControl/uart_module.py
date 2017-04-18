@@ -1,13 +1,13 @@
 from module import *
-from config import *
 import serial
-import time
 
 """
     NOTE : An OSError is raised when the module is unplugged 
     Is it usefull to treat it ?
 
 """
+
+AT_STATE = "at"
 
 class UartModule( Module ):
 
@@ -23,43 +23,43 @@ class UartModule( Module ):
     def create_command_states(self):
         raise NotImplementedError("create_command_states not implemented")
 
-
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@ UART @@@@@@@@@@@@@@@@@@@@@@@@
 
     def open_serial(self):
 
         bIsOpen = False
         try:
-            self.oSer= serial.Serial(self.s_port, self.i_bauds)# No timeout set as it can raise an exception
+            self.oSer= serial.Serial(self.sPort, self.iBauds)# No timeout set as it can raise an exception
         except ValueError:
             print("Value error when creating serial connection with uart module")
         except serial.SerialException:
             print("Value error when creating serial connection with uart module")
+
         self.at_check()
 
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@ MODULE @@@@@@@@@@@@@@@@@@@@@@@@
 
     def check_self_integrity(self):
-        self.at_check()
-        return self.bAt_ok
+        raise NotImplementedError("check_self_integrity not implemented")
 
     def handle_no_integrity(self):
-        pass
+        raise NotImplementedError("handle_no_integrity not implemented")
 
     def module_run(self):
-        pass
+        raise NotImplementedError("module_run not implemented")
 
     def log(self):
-        pass
+        raise NotImplementedError("log not implemented")
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@ COMMANDS MANAGEMENT @@@@@@@@@@@@@@@@@@@@@@@@@
 
     def write_command(self, command):
         sCommand = remove_special_characters( command)
+        sCommand+="\r\n"
         self.oSer.write(sCommand.encode("ascii"))
-        self.oSer.flush()
+        # Note : Flush clear the buffer, remember not to do it
 
     def read_buffer(self):
         buffer = ""
@@ -67,8 +67,15 @@ class UartModule( Module ):
             buffer = self.oSer.read_all()
         except serial.SerialTimeoutException:
             pass
+        except AttributeError: #Can be the case where open_serial hasn't been called
+            pass
+        except Exception:
+            pass
         buffer = buffer.decode("ascii")
-        return buffer.split("\r\n\r\n").split("\r\r\n") # Black Magic, trust me
+
+        buffer = buffer.replace("\r\n\r\n",'|')
+        buffer = buffer.replace("\r\r\n", '|') #TODO :NO NO NO NO NO ! Find something better !
+        return buffer.split('|') # Black Magic, trust me
 
     def clear_buffer(self):
 
@@ -76,14 +83,17 @@ class UartModule( Module ):
         self.manage_response( buffer, self.dDebuffer_dict )
 
     def manage_response( self, buffer, action_dict ):
+
         non_used_buffer = []
 
         for s in buffer :
-            #TODO : wrong, must only consider prefixe and send full line to action_cict function
-            if s in action_dict.keys() : # What if response has no prefixe ?
-                action_dict[s](s)
-            else :
-                non_used_buffer.append(s)
+            sPrefixe = s.split()
+            if len(sPrefixe) > 0:
+                sPrefixe = sPrefixe[0]
+                if sPrefixe in action_dict.keys() : # What if response has no prefixe ?
+                    action_dict[sPrefixe](s)
+                else :
+                    non_used_buffer.append(s)
 
         return non_used_buffer
 
@@ -104,8 +114,8 @@ class UartModule( Module ):
 
 
     def at_check(self):
-        self.oLock.aquire()
-        self.bAt_ok = False
+        self.oLock.acquire()
+        self.dCommandStates[AT_STATE].iState = 1
         self.send_command( "AT", { "OK" : self.set_at_ok_true } )
         self.oLock.release()
         return True
@@ -113,15 +123,31 @@ class UartModule( Module ):
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ RESPONSE FUNCTIONS @@@@@@@@@@@@@@@@@@@@@
 
-    def set_at_ok_true( self ):
-        self.bAt_ok = True
+    """
+        Response function have to take the response string as an argument, to avoid TypeError exception
+    """
+
+    def set_at_ok_true(self, sResponse):
+        self.dCommandStates[AT_STATE].iState = 1
+
+
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@ COMMAND STATES @@@@@@@@@@@@@@@@@@@@@@@
+
+class ATState(CommandState):
+
+    def __init__(self, funCommand, fTimeout, sName):
+        CommandState.__init__(self, funCommand, fTimeout, sName)
+
+
 
 #  @@@@@@@@@@@@@@@@@@@@@@@@ USEFULL FUNCTIONS @@@@@@@@@@@@@@@@@@@@@
 
-def remove_special_characters(self, command):
+def remove_special_characters(command):
     return str(command).replace("\r", "").replace("\n", "")
 
-def is_valid_baud( self, i_bauds ):
+def is_valid_baud( i_bauds ):
 
     if i_bauds not in [ 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200 ]: # SIM800 Authorized baud-rates
         return False

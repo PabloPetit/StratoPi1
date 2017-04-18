@@ -1,5 +1,7 @@
 from threading import *
+from queue import *
 from datetime import *
+from config import *
 import time
 
 
@@ -11,7 +13,7 @@ class Module( Thread ):
         Thread.__init__( self )
 
         self.oLock = Lock()
-        self.fDelay = fUpdateDelay
+        self.fUpdateDelay = fUpdateDelay
         self.bStop = False # Use to force a module shutdown
         self.dCommandStates = {}
         self.create_command_states()
@@ -31,13 +33,15 @@ class Module( Thread ):
             else:
                 self.module_run()
                 self.log()
+
+            # May be useful to check how much time last the current iteration and wait in consequence
             time.sleep( self.fUpdateDelay )
 
     def evaluate_command_states(self):
 
             for oCom in self.dCommandStates.values():
 
-                if oCom.IsOn :
+                if oCom.bIsOn:
 
                     tdTimeDelta = datetime.now() - oCom.dtLastCheck
                     fDeltaSeconds = tdTimeDelta.total_seconds()
@@ -45,6 +49,8 @@ class Module( Thread ):
                     if fDeltaSeconds > oCom.fTimeout:
                         oCom.funCommand()
                         oCom.dtLastCheck = datetime.now()
+                        oCom.log()
+
 
 
     def stop_condition(self):
@@ -91,36 +97,23 @@ class CommandState():
          Note : not happy with log method ... will not be implemented for now
     """
 
-    def __init__(self, funCommand, fTimeout, sName = "Defaut Command"):
+    def __init__(self, funCommand, fTimeout, sName = "Defaut_Command_Name"):
+        i = 0
         self.funCommand = funCommand # Command that takes no arguments
         self.fTimeout = fTimeout #Timeout in seconds
-        self.bOk = 0
+        self.iState = 0
         self.dtLastCheck = datetime.min
         self.sName = sName
         self.bIsOn = True
 
     def log(self): # Example :
         sLog = self.sName
-        if self.bOk :
-            sLog+= " is operational [ "+ str(self.bOk)+" ]"
+        if self.iState > 0 :
+            sLog+= " is operational [ "+ str(self.iState)+" ]"
         else:
-            sLog += " is not operational [ " + str(self.bOk) + " ]"
+            sLog += " is not operational [ " + str(self.iState) + " ]"
 
         sLog += " Last Check : "+ str(self.dtLastCheck)
 
 
 
-
-
-"""
-    Probably useless
-"""
-
-
-class State:
-    INITIALIZING = 5  # InitialState
-    OPERATIONAL = 1  # Init done, functional test ok
-    ASLEEP = 2  # Module Put to sleep waiting for awake
-    NOT_RESPONDING = 3  # Module has not respond to last functional test
-    RECONNECTING = 4
-    DEAD = 5  # ... Mission failure

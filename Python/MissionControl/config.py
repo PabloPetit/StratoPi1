@@ -23,12 +23,20 @@ CTRL_Z = '\x1a'
 # Could be a good idea to unsynchronized the timeouts to avoid heavy charge on same loop
 # and thus long time with lock state
 
+#Debug :
+BATTERY_REFRESH_TIMEOUT = 1
+TEMPERATURE_REFRESH_TIMEOUT = 1
+SIGNAL_REFRESH_TIMEOUT = 1
+AT_REFRESH_TIMEOUT = 1
+SMS_REFRESH_TIMEOUT = 1
+
+"""
 BATTERY_REFRESH_TIMEOUT = 120
 TEMPERATURE_REFRESH_TIMEOUT = 120
 SIGNAL_REFRESH_TIMEOUT = 120
 AT_REFRESH_TIMEOUT = 120
 SMS_REFRESH_TIMEOUT = 120
-
+"""
 
 #@@@@@@@@@@@@@@ SMS STUFF @@@@@@@@@@@@@@
 
