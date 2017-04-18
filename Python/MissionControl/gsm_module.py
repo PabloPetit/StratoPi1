@@ -138,7 +138,7 @@ class GsmModule( UartModule ):
 
     def check_signal_strenght(self):
         self.oLock.acquire()
-        self.send_command("AT+CSQ", {"+CMTE:": self.read_signal_strength}, 2)
+        self.send_command("AT+CSQ", {"+CSQ:": self.read_signal_strength}, 2)
         self.oLock.release()
 
 
@@ -151,24 +151,37 @@ class GsmModule( UartModule ):
 
     #Response type : +CBC: 0,85,4087
     def read_battery_charge(self, sResponse):
-        values = sResponse.split()[1]
-        values = values.split(',')
-        batteryState = self.dCommandStates[BATTERY_STATE]
-        batteryState.iPercent = int(values[1])
-        batteryState.iVoltage = int(values[2])
-        print(values)
+        try:
+            values = sResponse.split()[1]
+            values = values.split(',') # [0, 85, 4087]
+            batteryState = self.dCommandStates[BATTERY_STATE]
+            batteryState.iPercent = int(values[1]) # 85
+            batteryState.iVoltage = int(values[2]) # 4087
+            print("Battery : " +str(batteryState.iPercent)+ "% - "+str(batteryState.iVoltage)+"mV")
+        except Exception:
+            pass #TODO do something
 
     #Response type : +CMTE: 0,23.73
     def read_temperature(self, sResponse):
-        values = sResponse.split()[1]
-        values = values.split(',')
-        tempState = self.dCommandStates[TEMPERATURE_STATE]
-        tempState.fDegres = float(values[2])
-        print(values)
+        try:
+            values = sResponse.split()[1] # "0, 23.73 "
+            values = values.split(',') # [ 0, 23.73 ]
+            tempState = self.dCommandStates[TEMPERATURE_STATE]
+            tempState.fDegres = float(values[1]) # 23.73
+            print("Temperature : "+str(tempState.fDegres))
+        except Exception:
+            pass
 
     # Response type : +CSQ: 15,0
     def read_signal_strength(self, sResponse):
-        pass
+        try:
+            values = sResponse.split()[1]
+            values = values.split(',')
+            signalState = self.dCommandStates[SIGNAL_STATE]
+            signalState.iStrenght = int(values[0])
+            print("Signal : "+str(signalState.iStrenght))
+        except Exception:
+            pass
 
 
 

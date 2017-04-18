@@ -65,17 +65,18 @@ class UartModule( Module ):
         buffer = ""
         try:
             buffer = self.oSer.read_all()
-        except serial.SerialTimeoutException:
-            pass
-        except AttributeError: #Can be the case where open_serial hasn't been called
-            pass
-        except Exception:
-            pass
-        buffer = buffer.decode("ascii")
+            buffer = buffer.decode("ascii")
+            buffer = buffer.replace("\r\n\r\n", '|')
+            buffer = buffer.replace("\r\r\n", '|')  # TODO :NO NO NO NO NO ! Find something better !
+            return buffer.split('|')  # Black Magic, trust me
 
-        buffer = buffer.replace("\r\n\r\n",'|')
-        buffer = buffer.replace("\r\r\n", '|') #TODO :NO NO NO NO NO ! Find something better !
-        return buffer.split('|') # Black Magic, trust me
+        except serial.SerialTimeoutException:
+            return ""
+        except AttributeError: #Can be the case where open_serial hasn't been called
+            return ""
+        except Exception:
+            return ""
+
 
     def clear_buffer(self):
 
