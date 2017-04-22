@@ -2,6 +2,7 @@ from threading import *
 from queue import *
 from datetime import *
 from config import *
+from command_state import *
 import time
 
 
@@ -70,50 +71,6 @@ class Module( Thread ):
 
 
 
-class CommandState():
-
-    """
-        This class represent a certain functional state of the module that must be frequently updated.
-        An exemple would be : "Is able to send an sms" or "How much batterie is left"
-        
-        The CommandState consist of :
-         
-         - An evaluation function which will determine if the concerned functionality is operational
-         - A timeout, which represent the validity time of an evanluation
-         - The date of the last evaluation
-         - The current state of the functionality as an integer. Zero must represent a non-functionnal state
-         - A log function which returns a human-readable string for record purposes
-         - A name (String)
-         - A Is On boolean which tells if the state must be refreshed
-         
-         A module will, in its loop and for each of its CommandStates, check if the timeout is over
-         and in this case, run the evaluation function to update the current state.
-         
-         The evaluation function should receive as first argument
-         
-         The CommandStates are stored in a dictionnary whose keys will be a string 
-         
-         
-         Note : not happy with log method ... will not be implemented for now
-    """
-
-    def __init__(self, funCommand, fTimeout, sName = "Defaut_Command_Name"):
-        i = 0
-        self.funCommand = funCommand # Command that takes no arguments
-        self.fTimeout = fTimeout #Timeout in seconds
-        self.iState = 0
-        self.dtLastCheck = datetime.min
-        self.sName = sName
-        self.bIsOn = True
-
-    def log(self): # Example :
-        sLog = self.sName
-        if self.iState > 0 :
-            sLog+= " is operational [ "+ str(self.iState)+" ]"
-        else:
-            sLog += " is not operational [ " + str(self.iState) + " ]"
-
-        sLog += " Last Check : "+ str(self.dtLastCheck)
 
 
 

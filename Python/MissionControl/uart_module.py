@@ -3,11 +3,11 @@ import serial
 
 """
     NOTE : An OSError is raised when the module is unplugged 
-    Is it usefull to treat it ?
+    Is it usefull to handle it ?
 
 """
 
-AT_STATE = "at"
+
 
 class UartModule( Module ):
 
@@ -19,6 +19,14 @@ class UartModule( Module ):
         self.oSer = None
         self.dDebuffer_dict = {}
         self.name = "Default UART Module Name"
+
+        self.create_command_states()
+        self.create_debuffer_dict()
+        self.open_serial()
+
+
+    def create_debuffer_dict(self):
+        raise NotImplementedError("create_debuffer_dict not implemented")
 
     def create_command_states(self):
         raise NotImplementedError("create_command_states not implemented")
@@ -131,15 +139,6 @@ class UartModule( Module ):
     def set_at_ok_true(self, sResponse):
         self.dCommandStates[AT_STATE].iState = 1
 
-
-
-
-# @@@@@@@@@@@@@@@@@@@@@@@@@@ COMMAND STATES @@@@@@@@@@@@@@@@@@@@@@@
-
-class ATState(CommandState):
-
-    def __init__(self, funCommand, fTimeout, sName):
-        CommandState.__init__(self, funCommand, fTimeout, sName)
 
 
 

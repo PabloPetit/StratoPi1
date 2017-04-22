@@ -1,28 +1,15 @@
 from uart_module import *
 
 
-"""
-    Remeber to aquire and realease Lock before and after each command that communicates on the Serial
-
-"""
-
-
-BATTERY_STATE = "battery"
-TEMPERATURE_STATE = "temperature"
-SIGNAL_STATE = "signal"
-SMS_STATE = "sms"
-AT_STATE = "at"
-
-
 class GsmModule( UartModule ):
 
     def __init__(self, fUpdateDelay):
         UartModule.__init__(self, fUpdateDelay)
         self.name = "GSM_Module"
 
-        # It is probably better to use a queue for the sms as they take some time to send
-        # It will avoid to lock threads that need to send sms for too long
         self.qSms_to_send = Queue()
+
+        self.lSmsReceived = []
 
         # This dictionnary contains the possible request a user can send via sms, and the associated function
         # For instance, if the module receives a sms with the word STATE, it will respond by sending the global state of the probe
@@ -37,18 +24,30 @@ class GsmModule( UartModule ):
             "THIBAULT" : "0781856866"
         }
 
+        self.sCurrentSmsMessage = ""
+        self.iCurrentSmsState = 0
+
+        self.set_CMGF_state()
+        self.close_net_light()
+
+
     def create_command_states(self):
         self.dCommandStates[AT_STATE] = ATState(self.at_check, AT_REFRESH_TIMEOUT, AT_STATE)
         self.dCommandStates[BATTERY_STATE] = BatteryState(self.check_battery, BATTERY_REFRESH_TIMEOUT, BATTERY_STATE)
         self.dCommandStates[TEMPERATURE_STATE] = TemperatureState(self.check_temperature, TEMPERATURE_REFRESH_TIMEOUT, TEMPERATURE_STATE)
         self.dCommandStates[SIGNAL_STATE] = SignalState(self.check_signal_strenght, SIGNAL_REFRESH_TIMEOUT, SIGNAL_STATE)
+        self.dCommandStates[CMGF_STATE] = CMGFState(self.set_CMGF_state, CMGF_REFRESH_TIMEOUT, CMGF_STATE)
 
+    def create_debuffer_dict(self):
+        #self.dDebuffer_dict[str(B_NULL)] = "GSM_IS_DEAD"
+        #self.dDebuffer_dict[] = "GSM_IS_DEAD"
+        pass
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ MODULE FUNCTIONS @@@@@@@@@@@@@@@@@@@
 
     def check_self_integrity(self):
-        return True
+        return self.dCommandStates[AT_STATE].iState > 0
 
     def handle_no_integrity(self):
         pass
@@ -61,10 +60,56 @@ class GsmModule( UartModule ):
     def log(self):
         pass
 
-# @@@@@@@@@@@@@@@@@@@@@@@@ REGION @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-    def manage_sms_reception( self ):
+# @@@@@@@@@@@@@@@@@@@@@@@ COMMANDS @@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+    def set_CMGF_state(self):
+        self.send_command("AT+CMGF=1", {"OK": self.read_cmgf, "ERROR" : self.read_cmgf})
+
+    def close_net_light(self):
+        self.send_command("AT+CNETLIGHT=0", {"OK": self.read_netlight, "ERROR" : self.read_netlight})
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@ SMS RECEPTION @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+    # AT+CMGD=1 removes already read messages
+
+    def manage_sms_reception(self):
+        self.send_command("AT+CMGL=\"REC UNREAD\"", {"+CMGL:": self.read_sms}, 5)
+
+
+    # +CMGL: 14,"REC UNREAD","+33645160520","","17/04/22,12:22:12+08"\r\nSTARTMESS AAAA A  \nAA ENDMESS\r\n\r\n
+    def read_sms(self, sResponse):
+
+        sResponse = sResponse[6:] # Removes "+CMGL: "
+        (lInfos, sMessage) = sResponse.split("\r\n")
+        lInfos = lInfos.split(',')
+        iMemIndex = int(lInfos[0])
+        sSender = lInfos[2]
+        sDate =  lInfos[4]
+        oSms = SmsReceived(sMessage,iMemIndex, sSender, sDate)
+
+        self.lSmsReceived.append(oSms)
+        self.switch_sms_message(oSms)
+
+    def switch_sms_message(self, oSms):
+        sPrefixe = oSms.sMessage.split(" ")[0]
+        for com in self.dSms_commands.keys():
+            if com.lower() == sPrefixe.lower():
+                self.dSms_commands[com](oSms)
+                break
+
+
+    def check_memory_overload(self):
         pass
+
+
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@ SMS SENDING @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 
 
     def manage_sms_queue(self):
@@ -74,72 +119,49 @@ class GsmModule( UartModule ):
 
         oSms = self.qSms_to_send.get()
 
+        for n in oSms.lNumbers:
+            self.send_sms(oSms.sMessage, n)
 
-    #The following
-    def _send_sms(self, lSms):# list [ string, list [string] ]
+
+    def send_sms(self, sMessage, sNumber):
+        self.sCurrentSmsMessage = sMessage
+        sCom = "AT+CMGS=\""+sNumber+"\""
+        self.send_command(sCom, {">" : self.write_sms}, "ERROR")
+
+    def write_sms(self):
         pass
 
-# @@@@@@@@@@@@@@@@@@@@@@@@@ USER COMMANDS @@@@@@@@@@@@@@@@@@@@@@@@@@@
+    # @@@@@@@@@@@@@@@@@@@@@@@ SMS COMMANDS @@@@@@@@@@@@@@@@@@@@@@@@@
 
-    def send_sms( self, sMessage, lNumbers):
+    """
+        Sms commands must receive the concerned sms
+    """
 
-        if len(lNumbers) < 1 or len(sMessage) > MAX_SMS_LENGHT:
-            return False
+    def send_state( self, oSms ): # send sms with location, batterie charge, temperature ...
 
-        self.qSms_to_send.put([sMessage, lNumbers])
-        return True
-
-    def disable_communication(self):
-        self.oLock.acquire()
-
-        self.oLock.release()
-
-    def enable_communication(self):
-        self.oLock.acquire()
-
-        self.oLock.release()
-
-
-    def hard_reset(self):
-        #Reset the module the hard way by pulling down the reset cicuit
-        self.oLock.acquire()
-
-        self.oLock.release()
-
-    def clear_sms_memory(self, bOnlyAlreadyRedMessages = True):
-        self.oLock.acquire()
-
-        self.oLock.release()
-
-
-
-# @@@@@@@@@@@@@@@@@@@@@@@ SMS COMMANDS @@@@@@@@@@@@@@@@@@@@@@@@@
-
-    def send_state( self ): # send sms with location, batterie charge, temperature ...
-        self.oLock.acquire()
-
-        self.oLock.release()
+        oBatteryState = self.dCommandStates[BATTERY_STATE]
+        oSignalState = self.dCommandStates[SIGNAL_STATE]
+        oTempState = self.dCommandStates[TEMPERATURE_STATE]
+        sMessage = "BATTERY : "+str(oBatteryState.iPercent)+"% "+str(oBatteryState.iVoltage)+"mV\n"
+        sMessage += "SIGNAL : "+str(oSignalState.iStrenght)+"\n"
+        sMessage +=" TEMP : "+str(oTempState.fDegres)+"\n"
+        oSmsToSend = SmsToSend(sMessage, [oSms.sSender])
+        self.qSms_to_send.put(oSmsToSend)
 
 
 # @@@@@@@@@@@@@@@@@@@@@@ COMMAND STATES @@@@@@@@@@@@@@@@@@@@@@@@
 
 
     def check_battery(self):
-        self.oLock.acquire()
         self.send_command("AT+CBC", {"+CBC:": self.read_battery_charge})
-        self.oLock.release()
 
 
     def check_temperature(self ):
-        self.oLock.acquire()
         self.send_command("AT+CMTE?", {"+CMTE:": self.read_temperature}, 2) # Takes some time to get a response
-        self.oLock.release()
 
 
     def check_signal_strenght(self):
-        self.oLock.acquire()
         self.send_command("AT+CSQ", {"+CSQ:": self.read_signal_strength}, 2)
-        self.oLock.release()
 
 
 
@@ -147,6 +169,7 @@ class GsmModule( UartModule ):
 
     """
         Response function have to take the response string as an argument, to avoid TypeError exception
+        Also, do not forget to set the iState Value at the end of the function
     """
 
     #Response type : +CBC: 0,85,4087
@@ -159,7 +182,8 @@ class GsmModule( UartModule ):
             batteryState.iVoltage = int(values[2]) # 4087
             print("Battery : " +str(batteryState.iPercent)+ "% - "+str(batteryState.iVoltage)+"mV")
         except Exception:
-            pass #TODO do something
+            self.dCommandStates[BATTERY_STATE].iState = -1
+
 
     #Response type : +CMTE: 0,23.73
     def read_temperature(self, sResponse):
@@ -170,7 +194,7 @@ class GsmModule( UartModule ):
             tempState.fDegres = float(values[1]) # 23.73
             print("Temperature : "+str(tempState.fDegres))
         except Exception:
-            pass
+            self.dCommandStates[TEMPERATURE_STATE].iState = -1
 
     # Response type : +CSQ: 15,0
     def read_signal_strength(self, sResponse):
@@ -181,43 +205,48 @@ class GsmModule( UartModule ):
             signalState.iStrenght = int(values[0])
             print("Signal : "+str(signalState.iStrenght))
         except Exception:
+            self.dCommandStates[SIGNAL_STATE].iState = -1
+
+    # Response type = OK or ERROR
+    def read_cmgf(self, sResponse):
+
+        CMGFState = self.dCommandStates[CMGF_STATE]
+        CMGFState.iSmsMode = 0
+        try:
+            value = sResponse.split()[1]
+            if value == "OK":
+                CMGFState.iSmsMode = 1
+        except Exception:
             pass
 
 
+    # Response type = OK or ERROR
+    def read_netlight(self, sResponse):
+        try:
+            value = sResponse.split()[1]
+            if value == "OK":
+                pass
+        except Exception:
+            pass
 
-#@@@@@@@@@@@@@@@@@@@@@@@@@@ COMMAND STATES @@@@@@@@@@@@@@@@@@@@@@@
+
+class SmsToSend():
+
+    def __init__(self, sMessage, lNumbers, iPriority = 0 ):
+        self.sMessage = sMessage # The message
+        self.lNumbers = lNumbers # List of telephone numbers
+        self.iPriority = iPriority # Not sure if it will be used
+        self.dtCreationDate = datetime.now()
+        self.dtLastSendTry = datetime.min
 
 
 
-class BatteryState(CommandState):
 
-    VERY_LOW_CHARGE = 10
-    LOW_CHARGE = 25
-    HALF_CHARGE = 50
-    HIGH_CHARGE = 75
-    FULL_CHARGE = 95
+class SmsReceived():
 
-    def __init__(self, funCommand, fTimeout, sName):
-        i=0
-        CommandState.__init__(self, funCommand, fTimeout, sName)
-        self.iVoltage = 0
-        self.iPercent = 0
-
-# Note that the sensor might be broken on the sim ... 23.73 degres is the only value I can get
-class TemperatureState(CommandState):
-
-    def __init__(self, funCommand, fTimeout, sName):
-        CommandState.__init__(self, funCommand, fTimeout, sName)
-        self.sName = "GSM_Temperature_State"
-        self.fDegres = -273.15
-
-class SignalState(CommandState):
-
-    NO_SIGNAL = 99
-    LOW_SIGNAL = 0
-    MAX_SIGNAL = 31
-
-    def __init__(self, funCommand, fTimeout, sName):
-        CommandState.__init__(self, funCommand, fTimeout, sName)
-        self.bConnected = False
-        self.iStrenght = 0
+    def __init__(self, sMessage, iMemIndex, sSender, sDate):
+        self.sMessage = sMessage
+        self.iMemIndex = iMemIndex
+        self.sSender = sSender
+        self.sDateReceivedSMS = sDate # String format
+        self.dtDateReceivedModule = datetime.now()
