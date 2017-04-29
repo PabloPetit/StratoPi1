@@ -9,16 +9,19 @@ import serial
 
 
 
-class UartModule( Module ):
+class UartModule(Module):
 
-    def __init__(self, fUpdateDelay):
-        Module.__init__(self,  fUpdateDelay)
+    def __init__(self, oMainLog):
+        Module.__init__(self, oMainLog)
+
+        self.name = "DefaultUARTModuleName"
 
         self.sPort = DEFAULT_UART_PORT
         self.iBauds = DEFAULT_BAUDS
         self.oSer = None
         self.dDebuffer_dict = {}
-        self.name = "Default UART Module Name"
+
+        self.bIsOpen = False
 
         self.create_command_states()
         self.create_debuffer_dict()
@@ -35,13 +38,14 @@ class UartModule( Module ):
 
     def open_serial(self):
 
-        bIsOpen = False
         try:
             self.oSer= serial.Serial(self.sPort, self.iBauds)# No timeout set as it can raise an exception
+            self.bIsOpen = True
+            self.info("Serial Opened")
         except ValueError:
-            print("Value error when creating serial connection with uart module")
+            self.critical("Value error when creating serial connection with uart module : "+sys.exc_info()[0])
         except serial.SerialException:
-            print("Value error when creating serial connection with uart module")
+            self.critical("Value error when creating serial connection with uart module "+sys.exc_info()[0])
 
         self.at_check()
 
@@ -57,8 +61,6 @@ class UartModule( Module ):
     def module_run(self):
         raise NotImplementedError("module_run not implemented")
 
-    def log(self):
-        raise NotImplementedError("log not implemented")
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@ COMMANDS MANAGEMENT @@@@@@@@@@@@@@@@@@@@@@@@@
@@ -79,10 +81,13 @@ class UartModule( Module ):
             return buffer.split('|')  # Black Magic, trust me
 
         except serial.SerialTimeoutException:
+            self.warning("Serial read Error : "+sys.exc_info()[0])
             return ""
         except AttributeError: #Can be the case where open_serial hasn't been called
+            self.warning("Serial read Error : " + sys.exc_info()[0])
             return ""
         except Exception:
+            self.warning("Serial read Error : " + sys.exc_info()[0])
             return ""
 
 
@@ -123,10 +128,9 @@ class UartModule( Module ):
 
 
     def at_check(self):
-        self.oLock.acquire()
+        self.debug("Checking AT")
         self.dCommandStates[AT_STATE].iState = 1
         self.send_command( "AT", { "OK" : self.set_at_ok_true } )
-        self.oLock.release()
         return True
 
 
@@ -138,7 +142,7 @@ class UartModule( Module ):
 
     def set_at_ok_true(self, sResponse):
         self.dCommandStates[AT_STATE].iState = 1
-
+        self.debug("AT OK")
 
 
 
