@@ -10,10 +10,7 @@ class GsmModule( UartModule ):
         self.sLogPath = GSM_LOG_PATH
         self.fUpdateDelay = GSM_UPDATE_DELAY
 
-        self.setup_logger()
-
         self.qSms_to_send = Queue()
-
         self.lSmsReceived = []
 
         self.dSms_commands = {
@@ -29,22 +26,23 @@ class GsmModule( UartModule ):
             "THIBAULT" : "0781856866"
         }
 
-        #Current SMS message
         self.oCurrentSmsMessage = None
 
-        # Initialization
+
+
+    def setup(self):
+        super(GsmModule, self).setup()
         self.set_CMGF_state()
         self.close_net_light()
 
-        self.info("Init done")
 
 
     def create_command_states(self):
-        self.dCommandStates[AT_STATE] = ATState(self.at_check, AT_REFRESH_TIMEOUT, AT_STATE, "GSM_AT")
-        self.dCommandStates[BATTERY_STATE] = BatteryState(self.check_battery, BATTERY_REFRESH_TIMEOUT, BATTERY_STATE, "GSM_BATTERY")
-        self.dCommandStates[TEMPERATURE_STATE] = TemperatureState(self.check_temperature, TEMPERATURE_REFRESH_TIMEOUT, TEMPERATURE_STATE, "GSM_TEMPERATURE")
-        self.dCommandStates[SIGNAL_STATE] = SignalState(self.check_signal_strenght, SIGNAL_REFRESH_TIMEOUT, SIGNAL_STATE, "GSM_SIGNAL")
-        self.dCommandStates[CMGF_STATE] = CMGFState(self.set_CMGF_state, CMGF_REFRESH_TIMEOUT, CMGF_STATE,"GSM_CMGF")
+        self.dCommandStates[AT_STATE] = ATState(self.at_check, AT_REFRESH_TIMEOUT, AT_STATE)
+        self.dCommandStates[BATTERY_STATE] = BatteryState(self.check_battery, BATTERY_REFRESH_TIMEOUT, BATTERY_STATE)
+        self.dCommandStates[TEMPERATURE_STATE] = TemperatureState(self.check_temperature, TEMPERATURE_REFRESH_TIMEOUT, TEMPERATURE_STATE)
+        self.dCommandStates[SIGNAL_STATE] = SignalState(self.check_signal_strenght, SIGNAL_REFRESH_TIMEOUT, SIGNAL_STATE)
+        self.dCommandStates[CMGF_STATE] = CMGFState(self.set_CMGF_state, CMGF_REFRESH_TIMEOUT, CMGF_STATE)
 
     def create_debuffer_dict(self):
         #self.dDebuffer_dict[str(B_NULL)] = "GSM_IS_DEAD"
@@ -96,22 +94,21 @@ class GsmModule( UartModule ):
             iMemIndex = int(lInfos[0])
             sSender = lInfos[2]
             sDate =  lInfos[4]
-            oSms = SmsReceived(sMessage,iMemIndex, sSender, sDate)
-
-            self.lSmsReceived.append(oSms)
-            self.switch_sms_message(oSms)
 
             sLog = "Message received from : "+sSender+" at "+sDate +" Content : \n    "+sMessage
             self.info(sLog, True)
 
+            oSms = SmsReceived(sMessage, iMemIndex, sSender, sDate)
+            self.lSmsReceived.append(oSms)
+            self.switch_sms_message(oSms)
+
         except Exception:
-            self.error("An error occured while reading an SMS : \n"+sys.exc_info()[0])
+            self.exception("An error occured while reading an SMS : \n")
 
     def switch_sms_message(self, oSms):
         try:
-            self.debug("Finding SMS prefixe")
             sPrefixe = oSms.sMessage.split(" ")[0]
-            print(sPrefixe)
+            self.debug("Finding SMS prefixe : "+sPrefixe)
             for com in self.dSms_commands.keys():
                 if com.lower() == sPrefixe.lower():
                     self.dSms_commands[com](oSms)
@@ -119,7 +116,7 @@ class GsmModule( UartModule ):
                     return
             self.warning("Prefix not found")
         except Exception:
-            self.error("An error occured while switching on SMS prefix : \n" + sys.exc_info()[0])
+            self.exception("An error occured while switching on SMS prefix : \n")
 
 
     def check_memory_overload(self):
@@ -152,7 +149,7 @@ class GsmModule( UartModule ):
             sMes = self.oCurrentSmsMessage.sMessage + CTRL_Z
             self.send_command(sMes, {'+CMGS:': self.sms_send_success, "ERROR": self.sms_send_error}, 10)
         except Exception:
-            self.error("An error occured while writing an SMS : \n" + sys.exc_info()[0])
+            self.exception("An error occured while writing an SMS : \n")
 
     def sms_send_success(self, sResponse):
         self.info("SMS successfully sent : \n" + self.oCurrentSmsMessage.log_str())
@@ -192,7 +189,7 @@ class GsmModule( UartModule ):
             self.qSms_to_send.put(oSmsToSend)
             self.info("Sending STATE response to : "+str(lNumberList)+" Content : \n"+sMessage)
         except Exception:
-            self.error("An error occured while trying to send current state : \n" + sys.exc_info()[0])
+            self.exception("An error occured while trying to send current state : \n")
 
     def register_numbers(self, oSms):
         #Register the numbers in the sms
@@ -237,7 +234,7 @@ class GsmModule( UartModule ):
             self.debug("Battery charge : "+str(batteryState.iPercent)+"%"+" "+str(batteryState.iVoltage)+"mV")
         except Exception:
             self.dCommandStates[BATTERY_STATE].iState = -1
-            self.error("An error occured while reading battery charge : \n" + sys.exc_info()[0])
+            self.exception("An error occured while reading battery charge : \n" )
 
 
     #Response type : +CMTE: 0,23.73
@@ -250,7 +247,7 @@ class GsmModule( UartModule ):
             self.debug("Temperature : " + str(tempState.fDegres))
         except Exception:
             self.dCommandStates[TEMPERATURE_STATE].iState = -1
-            self.error("An error occured while reading temperature : \n" + sys.exc_info()[0])
+            self.exception("An error occured while reading temperature : \n" )
 
     # Response type : +CSQ: 15,0
     def read_signal_strength(self, sResponse):
@@ -262,7 +259,7 @@ class GsmModule( UartModule ):
             self.debug("Signal Strenght : "+str(signalState.iStrenght))
         except Exception:
             self.dCommandStates[SIGNAL_STATE].iState = -1
-            self.error("An error occured while reading signal strenght : \n" + sys.exc_info()[0])
+            self.exception("An error occured while reading signal strenght : \n")
 
     # Response type = OK or ERROR
     def read_cmgf(self, sResponse):
@@ -270,22 +267,22 @@ class GsmModule( UartModule ):
         CMGFState = self.dCommandStates[CMGF_STATE]
         CMGFState.iSmsMode = 0
         try:
-            value = sResponse.split()[1]
+            value = sResponse.split()[0]
             if value == "OK":
                 CMGFState.iSmsMode = 1
-                self.info("CMFG STATE is 1")
+                self.debug("CMFG STATE is 1")
         except Exception:
-            self.error("An error occured while reading battery CMFG state : \n" + sys.exc_info()[0])
+            self.exception("An error occured while reading battery CMFG state : \n")
 
 
     # Response type = OK or ERROR
     def read_netlight(self, sResponse):
         try:
-            value = sResponse.split()[1]
+            value = sResponse.split()[0]
             if value == "OK":
                 self.info("Netlight is OFF")
         except Exception:
-            self.error("An error occured while reading netlight response : \n" + sys.exc_info()[0])
+            self.exception("An error occured while reading netlight response : \n" )
 
 
 class SmsToSend():

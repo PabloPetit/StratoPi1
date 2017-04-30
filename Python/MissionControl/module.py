@@ -4,8 +4,10 @@ from datetime import *
 from config import *
 from command_state import *
 import logging
+import logging.handlers
 import time
 import sys
+import os
 
 # All import are done here to allow single import in derived classes
 
@@ -33,7 +35,14 @@ class Module( Thread ):
          #Don't forget to call setup_logger in derived classes
 
 
+    def setup(self):
+        self.setup_logger()
+
+
     def setup_logger(self):
+
+        if not os.path.isdir(self.sLogPath):
+            os.makedirs(self.sLogPath)
 
         self.oDebugHandler = logging.handlers.TimedRotatingFileHandler(self.sLogPath + DEBUG_LOG_PATH, when="m",
                                                                        interval=LOG_FILE_ROTATION_MINUTES,
@@ -72,7 +81,7 @@ class Module( Thread ):
                 self.module_run()
                 if datetime.now() - self.dtLastMainLogDate > self.tMainLogInterval :
                     self.send_log(True)
-                    self.tMainLogInterval = datetime.now()
+                    self.dtLastMainLogDate = datetime.now()
 
             time.sleep( self.fUpdateDelay )
         self.warning("Run Ended")
@@ -86,6 +95,7 @@ class Module( Thread ):
 
                 if fDeltaSeconds > oCom.fTimeout:
                     oCom.funCommand()
+                    oCom.set_state()
                     oCom.dtLastCheck = datetime.now()
         self.debug("Checking CommandStates Done")
 
@@ -107,9 +117,9 @@ class Module( Thread ):
 # @@@@@@@@@@@@@@@ LOG FUNCTIONS @@@@@@@@@@@@@@@@@@@@@@@@
 
     def send_log(self, bForwardMain):
-        sLog = "--- "+self.name+" ---\n"
+        sLog = "  --[ "+self.name+" CURRENT STATE ]---\n"
         for oCom in self.dCommandStates.values():
-            sLog+="    "+oCom.log_str()+"\n"
+            sLog+="        "+oCom.log_str()+"\n"
         self.info(sLog,True)
 
     def debug(self, sMessage, bForwardMain = False):
@@ -137,6 +147,11 @@ class Module( Thread ):
         if bForwardMain:
             self.oMainLog.critical(sMessage)
 
+
+    def exception(self, sMessage, bForwardMain = True):
+        self.oLog.exception(sMessage)
+        if bForwardMain:
+            self.oMainLog.exception(sMessage)
 
 
 

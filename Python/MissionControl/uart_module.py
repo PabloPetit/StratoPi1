@@ -23,6 +23,9 @@ class UartModule(Module):
 
         self.bIsOpen = False
 
+
+    def setup(self):
+        super(UartModule, self).setup()
         self.create_command_states()
         self.create_debuffer_dict()
         self.open_serial()
@@ -43,9 +46,9 @@ class UartModule(Module):
             self.bIsOpen = True
             self.info("Serial Opened")
         except ValueError:
-            self.critical("Value error when creating serial connection with uart module : "+sys.exc_info()[0])
+            self.exception("Value error when creating serial connection with uart module : ")
         except serial.SerialException:
-            self.critical("Value error when creating serial connection with uart module "+sys.exc_info()[0])
+            self.exception("Value error when creating serial connection with uart module : ")
 
         self.at_check()
 
@@ -66,10 +69,12 @@ class UartModule(Module):
 # @@@@@@@@@@@@@@@@@@@@@@@ COMMANDS MANAGEMENT @@@@@@@@@@@@@@@@@@@@@@@@@
 
     def write_command(self, command):
-        sCommand = remove_special_characters( command)
-        sCommand+="\r\n"
-        self.oSer.write(sCommand.encode("ascii"))
-        # Note : Flush clear the buffer, remember not to do it
+        try:
+            sCommand = remove_special_characters( command)
+            sCommand+="\r\n"
+            self.oSer.write(sCommand.encode("ascii"))
+        except OSError:
+            self.exception(" --- UART NOT FOUND ---")
 
     def read_buffer(self):
         buffer = ""
@@ -81,13 +86,13 @@ class UartModule(Module):
             return buffer.split('|')  # Black Magic, trust me
 
         except serial.SerialTimeoutException:
-            self.warning("Serial read Error : "+sys.exc_info()[0])
+            self.exception("Serial read Error : ")
             return ""
         except AttributeError: #Can be the case where open_serial hasn't been called
-            self.warning("Serial read Error : " + sys.exc_info()[0])
+            self.exception("Serial read Error : ")
             return ""
         except Exception:
-            self.warning("Serial read Error : " + sys.exc_info()[0])
+            self.exception("Serial read Error : ")
             return ""
 
 

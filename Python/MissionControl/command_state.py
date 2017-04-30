@@ -1,13 +1,5 @@
 from datetime import *
-
-
-BATTERY_STATE = "battery"
-TEMPERATURE_STATE = "temperature"
-SIGNAL_STATE = "signal"
-SMS_STATE = "sms"
-CMGF_STATE = "cmgf"
-AT_STATE = "at"
-
+from config import *
 
 
 class CommandState():
@@ -52,7 +44,11 @@ class CommandState():
         raise NotImplementedError("Create dict states not implemented")
 
     def log_str(self):
-        return "[ "+self.sName+" ] Last check : "+str(self.dtLastCheck) +" State : "+self.dStates[self.iState]+" : "+str(self.iState)
+        sLog = "[ "+self.sName+" ]"
+        sLog += " Last check : "+ str(self.dtLastCheck)
+        sLog += " State [ " + self.dStates[self.iState][1]
+        sLog += " , "+str(self.iState)+" ]"
+        return sLog
 
     def set_state(self):
         pass
@@ -68,8 +64,8 @@ class ATState(CommandState):
         CommandState.__init__(self, funCommand, fTimeout, sName)
 
     def create_dict_state(self):
-        self.dStates[0] = "No Response"
-        self.dStates[1] = "AT OK"
+        self.dStates[0] = [0, "No Response"]
+        self.dStates[1] = [1, "AT OK"]
 
     def log_str(self):
         return super(ATState, self).log_str()
@@ -97,13 +93,13 @@ class BatteryState(CommandState):
 
     def set_state(self):
 
-        for k in BatteryState.BATTERY_PERCENT_STATES.keys():
-            if self.iPercent <= BatteryState.BATTERY_PERCENT_STATES[k]:
+        for k in self.dStates.keys():
+            if self.iPercent <= self.dStates[k][0]:
                 self.iState = k
                 break
 
     def log_str(self):
-        return super(BatteryState, self).log_str() + " - "+str(self.iPercent)+"% : "+str(self.iVoltage)+"mV"
+        return super(BatteryState, self).log_str() + " : "+str(self.iPercent)+"% : "+str(self.iVoltage)+"mV"
 
 
 #  @@@@@@@@@@@@@@@@@@@@@@@@ TEMPERATURE STATE  @@@@@@@@@@@@@@@@@@@@@
@@ -116,8 +112,9 @@ class TemperatureState(CommandState):
         self.fDegres = -273.15
 
     def create_dict_state(self):
+
         self.dStates = {
-            0: [-273.15, "ABSOLUT_ZERO"],  # HA
+            0: [-273.15, "ABSOLUT_ZERO"],
             1: [-40, "DANGEROUSLY_COLD"],
             2: [-20, "LOW_NEGATIVE"],
             3: [0, "NEGATIVE"],
@@ -128,13 +125,13 @@ class TemperatureState(CommandState):
         }
 
     def set_state(self):
-        for k in BatteryState.BATTERY_PERCENT_STATES.keys():
-            if self.fDegres <= TemperatureState.TEMP_STATES[k]:
+        for k in self.dStates.keys():
+            if self.fDegres <= self.dStates[k][0]:
                 self.iState = k
                 break
 
     def log_str(self):
-        return super(TemperatureState, self).log_str() + " - " + str(self.fDegres) + "°C : "
+        return super(TemperatureState, self).log_str() + " : " + str(self.fDegres) + "°C"
 
 #  @@@@@@@@@@@@@@@@@@@@@@@@ SIGNAL STATE  @@@@@@@@@@@@@@@@@@@@@
 
@@ -162,13 +159,13 @@ class SignalState(CommandState):
             self.iState = 0
             return
 
-        for k in SignalState.SIGNAL_STATES.keys():
-            if self.fDegres <= SignalState.SIGNAL_STATES[k]:
+        for k in self.dStates.keys():
+            if self.iStrenght <= self.dStates[k][0]:
                 self.iState = k
                 break
 
     def log_str(self):
-        return super(SignalState, self).log_str() + " - " + str(self.iStrenght)
+        return super(SignalState, self).log_str() + " : " + str(self.iStrenght)
 
 
 #  @@@@@@@@@@@@@@@@@@@@@@@@ SMS MODE STATE  @@@@@@@@@@@@@@@@@@@@@
@@ -180,8 +177,8 @@ class CMGFState(CommandState):
         self.iSmsMode = 0
 
     def create_dict_state(self):
-        self.dStates[0] = "SMS Mode : Cannot send messages"
-        self.dStates[1] = "SMS Mode : Operational"
+        self.dStates[0] = [0, "SMS Mode : Cannot send messages"]
+        self.dStates[1] = [1, "SMS Mode : Operational"]
 
     def set_state(self):
         self.iState = self.iSmsMode
@@ -193,6 +190,31 @@ class CMGFState(CommandState):
 #  @@@@@@@@@@@@@@@@@@@@@@@@ SMS MEMORY STATE  @@@@@@@@@@@@@@@@@@@@@
 
 
+
+
+
+#  @@@@@@@@@@@@@@@@@@@@@@@@      ADC STATE    @@@@@@@@@@@@@@@@@@@@@
+
+
+class ADCState(CommandState):
+    # Associate with CMGF = 1
+    def __init__(self, funCommand, fTimeout, sName):
+        CommandState.__init__(self, funCommand, fTimeout, sName)
+        self.iState = 1
+
+        self.lTempBattery = [0, 0]
+        self.lTempOutside = [0, 0]
+        self.lUV = [0, 0]
+
+    def create_dict_state(self):
+        self.dStates[0] = [0, "Should Not Happen"]
+        self.dStates[1] = [1, "Operational"]
+
+    def log_str(self):
+        sLog  = super(CMGFState, self).log_str()+"\n"
+        sLog += "      UV : " +str(self.lUV[0])+", "+str(self.lUV[1])+"mV\n"
+        sLog += "      Temperature battery : " + str(self.lTempBattery[0]) + ", " + str(self.lTempBattery[1]) + "mV\n"
+        sLog += "      Temperature outside : " + str(self.lTempOutside[0]) + ", " + str(self.lTempOutside[1]) + "mV\n"
 
 
 
