@@ -9,8 +9,6 @@ import time
 import sys
 import os
 
-# All import are done here to allow single import in derived classes
-
 
 class Module( Thread ):
 
@@ -20,6 +18,7 @@ class Module( Thread ):
         self.bStop = False # Use to force a module shutdown
         self.dCommandStates = {}
         self.create_command_states()
+        self.dtInitDate = datetime.now()
         self.dtLastMainLogDate = datetime.min
         self.oLog = None
         self.oMainLog = oMainLog
@@ -82,9 +81,11 @@ class Module( Thread ):
                 if datetime.now() - self.dtLastMainLogDate > self.tMainLogInterval :
                     self.send_log(True)
                     self.dtLastMainLogDate = datetime.now()
+                else:
+                    self.send_log(False)
 
             time.sleep( self.fUpdateDelay )
-        self.warning("Run Ended")
+        self.warning("Run Finished")
 
     def evaluate_command_states(self):
         self.debug("Checking CommandStates ...")
@@ -120,7 +121,7 @@ class Module( Thread ):
         sLog = "  --[ "+self.name+" CURRENT STATE ]---\n"
         for oCom in self.dCommandStates.values():
             sLog+="        "+oCom.log_str()+"\n"
-        self.info(sLog,True)
+        self.info(sLog,bForwardMain)
 
     def debug(self, sMessage, bForwardMain = False):
         self.oLog.debug(sMessage)

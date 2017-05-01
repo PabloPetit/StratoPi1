@@ -35,8 +35,6 @@ class GsmModule( UartModule ):
         self.set_CMGF_state()
         self.close_net_light()
 
-
-
     def create_command_states(self):
         self.dCommandStates[AT_STATE] = ATState(self.at_check, AT_REFRESH_TIMEOUT, AT_STATE)
         self.dCommandStates[BATTERY_STATE] = BatteryState(self.check_battery, BATTERY_REFRESH_TIMEOUT, BATTERY_STATE)
@@ -62,8 +60,6 @@ class GsmModule( UartModule ):
 
         self.manage_sms_queue()
         self.manage_sms_reception()
-
-
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@ COMMANDS @@@@@@@@@@@@@@@@@@@@@@@@@
@@ -94,11 +90,10 @@ class GsmModule( UartModule ):
             iMemIndex = int(lInfos[0])
             sSender = lInfos[2]
             sDate =  lInfos[4]
-
-            sLog = "Message received from : "+sSender+" at "+sDate +" Content : \n    "+sMessage
-            self.info(sLog, True)
-
             oSms = SmsReceived(sMessage, iMemIndex, sSender, sDate)
+
+            self.info("Message received : \n"+oSms.log_str(), True)
+
             self.lSmsReceived.append(oSms)
             self.switch_sms_message(oSms)
 
@@ -187,7 +182,7 @@ class GsmModule( UartModule ):
             lNumberList = [ oSms.sSender.replace('"', "")]
             oSmsToSend = SmsToSend(sMessage, lNumberList)
             self.qSms_to_send.put(oSmsToSend)
-            self.info("Sending STATE response to : "+str(lNumberList)+" Content : \n"+sMessage)
+            self.info("Sending STATE response to : "+str(lNumberList)+" Content : \n"+oSmsToSend.log_str())
         except Exception:
             self.exception("An error occured while trying to send current state : \n")
 

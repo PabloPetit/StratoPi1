@@ -109,7 +109,17 @@ AT_STATE = "at"
 ADC_STATE = "adc"
 
 
+# @@@@@@@@@@@@@@@@@@@@@@@@ GPS RELATED @@@@@@@@@@@@@@@@
 
+
+GPS_MEMORY = 40
+
+GPRMC = "GPRMC"
+GPVTG = "GPVTG"
+GPGGA = "GPGGA"
+GPGLL = "GPGLL"
+GPGSA = "GPGSA"
+GPGSV = "GPGSV"
 
 
 

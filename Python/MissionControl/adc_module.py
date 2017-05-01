@@ -14,7 +14,7 @@ class ADCModule(Module):
 
     def setup(self):
         super(ADCModule, self).setup()
-        # Be carreful to avoid conflicts with
+        # Be carreful to avoid conflicts with gpios
         GPIO.setmode(GPIO.BOARD)
         GPIO.setwarnings(False)
 
@@ -34,8 +34,8 @@ class ADCModule(Module):
         iTempOutside = self.read_adc(TEMP_OUTSIDE_ADC_PIN)
 
         lUv = [ iUv, self.get_mV(iUv)]
-        lTempBattery = [ iTempBattery, self.get_mV(iTempBattery) ]
-        lTempOutside = [iTempOutside, self.get_mV(iTempOutside)]
+        lTempBattery = [iTempBattery, self.get_mV(iTempBattery), self.get_celsius(iTempBattery)]
+        lTempOutside = [iTempOutside, self.get_mV(iTempOutside), self.get_celsius(iTempOutside)]
 
         oAdc_state = self.dCommandStates[ADC_STATE]
         oAdc_state.lUv = lUv
@@ -86,6 +86,9 @@ class ADCModule(Module):
 
     def get_mV(self, iAdc_res):
         return iAdc_res * ( 3300.0 / 1024.0 )
+
+    def get_celsius(self, iMv):
+        return ( iMv - 500.0 ) / 10.0
 
     def module_run(self):
         pass

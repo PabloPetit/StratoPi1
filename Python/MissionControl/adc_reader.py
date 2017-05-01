@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-
+import time
 #Read SPI data from MCP3008. 0<= adcnum < 8
 def readadc(adcnum, clockpin, mosipin, misopin, cspin):
 
@@ -57,12 +57,22 @@ GPIO.setup(SPICLK, GPIO.OUT)
 GPIO.setup(SPICS, GPIO.OUT)
 
 
-adcnum = 7
-# Lecture de la valeur brute du capteur
-read_adc0 = readadc(adcnum, SPICLK, SPIMOSI, SPIMISO, SPICS)
-# conversion de la valeur brute lue en milivolts = ADC * ( 3300 / 1024 )
-millivolts = read_adc0 * ( 3300.0 / 1024.0)
 
+print('Reading MCP3008 values, press Ctrl-C to quit...')
+# Print nice channel column headers.
+print('| {0:>4} | {1:>4} | {2:>4} | {3:>4} | {4:>4} | {5:>4} | {6:>4} | {7:>4} |'.format(*range(8)))
+print('-' * 57)
+# Main program loop.
+while True:
+    # Read all the ADC channel values in a list.
+    values = [0]*8
+    for i in range(8):
+        # The read_adc function will get the value of the specified channel (0-7).
+        values[i] = readadc(i, SPICLK, SPIMOSI, SPIMISO, SPICS)
+    # Print the ADC values.
+    print('| {0:>4} | {1:>4} | {2:>4} | {3:>4} | {4:>4} | {5:>4} | {6:>4} | {7:>4} |'.format(*values))
+    # Pause for half a second.
+    time.sleep(0.5)
 
 
 

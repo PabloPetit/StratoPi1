@@ -202,8 +202,8 @@ class ADCState(CommandState):
         CommandState.__init__(self, funCommand, fTimeout, sName)
         self.iState = 1
 
-        self.lTempBattery = [0, 0]
-        self.lTempOutside = [0, 0]
+        self.lTempBattery = [0, 0, 0]
+        self.lTempOutside = [0, 0, 0]
         self.lUV = [0, 0]
 
     def create_dict_state(self):
@@ -213,8 +213,8 @@ class ADCState(CommandState):
     def log_str(self):
         sLog  = super(CMGFState, self).log_str()+"\n"
         sLog += "      UV : " +str(self.lUV[0])+", "+str(self.lUV[1])+"mV\n"
-        sLog += "      Temperature battery : " + str(self.lTempBattery[0]) + ", " + str(self.lTempBattery[1]) + "mV\n"
-        sLog += "      Temperature outside : " + str(self.lTempOutside[0]) + ", " + str(self.lTempOutside[1]) + "mV\n"
+        sLog += "      Temp bat : " + str(self.lTempBattery[0]) + ", " + str(self.lTempBattery[1]) + "mV, "+str(self.lTempBattery[2]+" °C\n")
+        sLog += "      Temp out : " + str(self.lTempOutside[0]) + ", " + str(self.lTempOutside[1]) + "mV, "+str(self.lTempOutside[2]+" °C\n")
 
 
 
