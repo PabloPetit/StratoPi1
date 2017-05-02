@@ -3,8 +3,8 @@ from uart_module import *
 
 class GsmModule( UartModule ):
 
-    def __init__(self, oMainLog):
-        UartModule.__init__(self, oMainLog)
+    def __init__(self, oMainLog, sPort):
+        UartModule.__init__(self, oMainLog, sPort)
 
         self.name = GSM_NAME
         self.sLogPath = GSM_LOG_PATH

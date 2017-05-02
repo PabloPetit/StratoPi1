@@ -3,8 +3,8 @@ import collections
 
 class GPSModule(UartModule):
 
-    def __init__(self, oMainLog):
-        UartModule.__init__(self, oMainLog)
+    def __init__(self, oMainLog, sPort):
+        UartModule.__init__(self, oMainLog, sPort)
 
         self.name = GPS_NAME
         self.sLogPath = GPS_LOG_PATH
