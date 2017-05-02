@@ -213,8 +213,8 @@ class ADCState(PeriodicalCheck):
     def log_str(self):
         sLog  = super(ADCState, self).log_str()+"\n"
         sLog += "      UV : " +str(self.lUV[0])+", "+str(self.lUV[1])+"mV\n"
-        sLog += "      Temp bat : " + str(self.lTempBattery[0]) + ", " + str(self.lTempBattery[1]) + "mV, "+str(self.lTempBattery[2]+" °C\n")
-        sLog += "      Temp out : " + str(self.lTempOutside[0]) + ", " + str(self.lTempOutside[1]) + "mV, "+str(self.lTempOutside[2]+" °C\n")
+        sLog += "      Temp bat : " + str(self.lTempBattery[0]) + ", " + str(self.lTempBattery[1]) + "mV, "+str(self.lTempBattery[2])+" °C\n"
+        sLog += "      Temp out : " + str(self.lTempOutside[0]) + ", " + str(self.lTempOutside[1]) + "mV, "+str(self.lTempOutside[2])+" °C\n"
 
 
 

@@ -74,8 +74,8 @@
           <file leaf-file-name="periodical_check.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/periodical_check.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="546">
-                  <caret line="206" column="25" lean-forward="true" selection-start-line="206" selection-start-column="25" selection-end-line="206" selection-end-column="25" />
+                <state relative-caret-position="584">
+                  <caret line="216" column="122" lean-forward="false" selection-start-line="216" selection-start-column="122" selection-end-line="216" selection-end-column="122" />
                   <folding>
                     <element signature="e#0#22#0" expanded="true" />
                   </folding>
@@ -915,8 +915,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/periodical_check.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="546">
-          <caret line="206" column="25" lean-forward="true" selection-start-line="206" selection-start-column="25" selection-end-line="206" selection-end-column="25" />
+        <state relative-caret-position="584">
+          <caret line="216" column="122" lean-forward="false" selection-start-line="216" selection-start-column="122" selection-end-line="216" selection-end-column="122" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>
