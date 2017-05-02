@@ -1,13 +1,13 @@
 import serial
 import logging
-import datetime
+from datetime import *
 
 #@@@@@@@@@@@@@@ PRINTER RELATED @@@@@@@@@@@@
 
 
 LOG_FILE_ROTATION_MINUTES = 15#30
 
-DEFAULT_MAIN_LOG_INTERVAL = datetime.timedelta(minutes = 3)
+DEFAULT_MAIN_LOG_INTERVAL = timedelta(minutes = 3)
 
 LOG_FORMATTER = logging.Formatter("[ %(name)s - %(levelname)s ] %(asctime)s - %(message)s")
 
