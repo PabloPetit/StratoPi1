@@ -53,7 +53,7 @@ class Printer( Module ):
 
 # @@@@@@@@@@@@@@@@@@@ MODULE OVERRIDE @@@@@@@@@@@@@@@@@@@@@@@@@@
 
-    def create_command_states(self):
+    def create_peridical_checks(self):
         pass
 
     def check_self_integrity(self):

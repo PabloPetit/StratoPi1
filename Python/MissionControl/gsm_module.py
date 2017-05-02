@@ -35,12 +35,12 @@ class GsmModule( UartModule ):
         self.set_CMGF_state()
         self.close_net_light()
 
-    def create_command_states(self):
-        self.dCommandStates[AT_STATE] = ATState(self.at_check, AT_REFRESH_TIMEOUT, AT_STATE)
-        self.dCommandStates[BATTERY_STATE] = BatteryState(self.check_battery, BATTERY_REFRESH_TIMEOUT, BATTERY_STATE)
-        self.dCommandStates[TEMPERATURE_STATE] = TemperatureState(self.check_temperature, TEMPERATURE_REFRESH_TIMEOUT, TEMPERATURE_STATE)
-        self.dCommandStates[SIGNAL_STATE] = SignalState(self.check_signal_strenght, SIGNAL_REFRESH_TIMEOUT, SIGNAL_STATE)
-        self.dCommandStates[CMGF_STATE] = CMGFState(self.set_CMGF_state, CMGF_REFRESH_TIMEOUT, CMGF_STATE)
+    def create_peridical_checks(self):
+        self.dPeriodicalChecks[AT_STATE] = ATState(self.at_check, AT_REFRESH_TIMEOUT, AT_STATE)
+        self.dPeriodicalChecks[BATTERY_STATE] = BatteryState(self.check_battery, BATTERY_REFRESH_TIMEOUT, BATTERY_STATE)
+        self.dPeriodicalChecks[TEMPERATURE_STATE] = TemperatureState(self.check_temperature, TEMPERATURE_REFRESH_TIMEOUT, TEMPERATURE_STATE)
+        self.dPeriodicalChecks[SIGNAL_STATE] = SignalState(self.check_signal_strenght, SIGNAL_REFRESH_TIMEOUT, SIGNAL_STATE)
+        self.dPeriodicalChecks[CMGF_STATE] = CMGFState(self.set_CMGF_state, CMGF_REFRESH_TIMEOUT, CMGF_STATE)
 
     def create_debuffer_dict(self):
         #self.dDebuffer_dict[str(B_NULL)] = "GSM_IS_DEAD"
@@ -51,7 +51,7 @@ class GsmModule( UartModule ):
 # @@@@@@@@@@@@@@@@@@@@@@@@ MODULE FUNCTIONS @@@@@@@@@@@@@@@@@@@
 
     def check_self_integrity(self):
-        return self.dCommandStates[AT_STATE].iState > 0
+        return self.dPeriodicalChecks[AT_STATE].iState > 0
 
     def handle_no_integrity(self):
         pass
@@ -173,9 +173,9 @@ class GsmModule( UartModule ):
 
     def send_state( self, oSms ): # send sms with location, batterie charge, temperature ...
         try:
-            oBatteryState = self.dCommandStates[BATTERY_STATE]
-            oSignalState = self.dCommandStates[SIGNAL_STATE]
-            oTempState = self.dCommandStates[TEMPERATURE_STATE]
+            oBatteryState = self.dPeriodicalChecks[BATTERY_STATE]
+            oSignalState = self.dPeriodicalChecks[SIGNAL_STATE]
+            oTempState = self.dPeriodicalChecks[TEMPERATURE_STATE]
             sMessage = "BATTERY : "+str(oBatteryState.iPercent)+"% "+str(oBatteryState.iVoltage)+"mV\n"
             sMessage += "SIGNAL : "+str(oSignalState.iStrenght)+"\n"
             sMessage +="TEMP : "+str(oTempState.fDegres)+"\n"
@@ -223,12 +223,12 @@ class GsmModule( UartModule ):
         try:
             values = sResponse.split()[1]
             values = values.split(',') # [0, 85, 4087]
-            batteryState = self.dCommandStates[BATTERY_STATE]
+            batteryState = self.dPeriodicalChecks[BATTERY_STATE]
             batteryState.iPercent = int(values[1]) # 85
             batteryState.iVoltage = int(values[2]) # 4087
             self.debug("Battery charge : "+str(batteryState.iPercent)+"%"+" "+str(batteryState.iVoltage)+"mV")
         except Exception:
-            self.dCommandStates[BATTERY_STATE].iState = -1
+            self.dPeriodicalChecks[BATTERY_STATE].iState = -1
             self.exception("An error occured while reading battery charge : \n" )
 
 
@@ -237,11 +237,11 @@ class GsmModule( UartModule ):
         try:
             values = sResponse.split()[1] # "0, 23.73 "
             values = values.split(',') # [ 0, 23.73 ]
-            tempState = self.dCommandStates[TEMPERATURE_STATE]
+            tempState = self.dPeriodicalChecks[TEMPERATURE_STATE]
             tempState.fDegres = float(values[1]) # 23.73
             self.debug("Temperature : " + str(tempState.fDegres))
         except Exception:
-            self.dCommandStates[TEMPERATURE_STATE].iState = -1
+            self.dPeriodicalChecks[TEMPERATURE_STATE].iState = -1
             self.exception("An error occured while reading temperature : \n" )
 
     # Response type : +CSQ: 15,0
@@ -249,17 +249,17 @@ class GsmModule( UartModule ):
         try:
             values = sResponse.split()[1]
             values = values.split(',')
-            signalState = self.dCommandStates[SIGNAL_STATE]
+            signalState = self.dPeriodicalChecks[SIGNAL_STATE]
             signalState.iStrenght = int(values[0])
             self.debug("Signal Strenght : "+str(signalState.iStrenght))
         except Exception:
-            self.dCommandStates[SIGNAL_STATE].iState = -1
+            self.dPeriodicalChecks[SIGNAL_STATE].iState = -1
             self.exception("An error occured while reading signal strenght : \n")
 
     # Response type = OK or ERROR
     def read_cmgf(self, sResponse):
 
-        CMGFState = self.dCommandStates[CMGF_STATE]
+        CMGFState = self.dPeriodicalChecks[CMGF_STATE]
         CMGFState.iSmsMode = 0
         try:
             value = sResponse.split()[0]

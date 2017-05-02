@@ -2,7 +2,7 @@ from threading import *
 from queue import *
 from datetime import *
 from config import *
-from command_state import *
+from periodical_check import *
 import logging
 import logging.handlers
 import time
@@ -16,8 +16,8 @@ class Module( Thread ):
 
         Thread.__init__( self)
         self.bStop = False # Use to force a module shutdown
-        self.dCommandStates = {}
-        self.create_command_states()
+        self.dPeriodicalChecks = {}
+        self.create_peridical_checks()
         self.dtInitDate = datetime.now()
         self.dtLastMainLogDate = datetime.min
         self.oLog = None
@@ -63,14 +63,14 @@ class Module( Thread ):
         self.oLog.addHandler(self.oInfoHandler)
 
 
-    def create_command_states(self):
+    def create_peridical_checks(self):
         raise NotImplementedError("create_command_states not implemented")
 
     def run(self):
         self.info("Run Started", True)
         while not self.stop_condition():
             self.debug("Begin Loop")
-            self.evaluate_command_states()
+            self.evaluate_periodical_checks()
 
             if not self.check_self_integrity():
                 self.error("Integrity check not passed")
@@ -87,9 +87,9 @@ class Module( Thread ):
             time.sleep( self.fUpdateDelay )
         self.warning("Run Finished")
 
-    def evaluate_command_states(self):
-        self.debug("Checking CommandStates ...")
-        for oCom in self.dCommandStates.values():
+    def evaluate_periodical_checks(self):
+        self.debug("Evaluating Periodical Checks ...")
+        for oCom in self.dPeriodicalChecks.values():
             if oCom.bIsOn:
                 tdTimeDelta = datetime.now() - oCom.dtLastCheck
                 fDeltaSeconds = tdTimeDelta.total_seconds()
@@ -98,7 +98,7 @@ class Module( Thread ):
                     oCom.funCommand()
                     oCom.set_state()
                     oCom.dtLastCheck = datetime.now()
-        self.debug("Checking CommandStates Done")
+        self.debug("Evaluating Periodical Checks Done")
 
 
 
@@ -119,7 +119,7 @@ class Module( Thread ):
 
     def send_log(self, bForwardMain):
         sLog = "  --[ "+self.name+" CURRENT STATE ]---\n"
-        for oCom in self.dCommandStates.values():
+        for oCom in self.dPeriodicalChecks.values():
             sLog+="        "+oCom.log_str()+"\n"
         self.info(sLog,bForwardMain)
 

@@ -11,12 +11,12 @@ import serial
 
 class UartModule(Module):
 
-    def __init__(self, oMainLog):
+    def __init__(self, oMainLog, sPort = DEFAULT_UART_PORT):
         Module.__init__(self, oMainLog)
 
         self.name = "DefaultUARTModuleName"
 
-        self.sPort = DEFAULT_UART_PORT
+        self.sPort = sPort
         self.iBauds = DEFAULT_BAUDS
         self.oSer = None
         self.dDebuffer_dict = {}
@@ -26,7 +26,7 @@ class UartModule(Module):
 
     def setup(self):
         super(UartModule, self).setup()
-        self.create_command_states()
+        self.create_peridical_checks()
         self.create_debuffer_dict()
         self.open_serial()
 
@@ -34,7 +34,7 @@ class UartModule(Module):
     def create_debuffer_dict(self):
         raise NotImplementedError("create_debuffer_dict not implemented")
 
-    def create_command_states(self):
+    def create_peridical_checks(self):
         raise NotImplementedError("create_command_states not implemented")
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@ UART @@@@@@@@@@@@@@@@@@@@@@@@
@@ -134,7 +134,7 @@ class UartModule(Module):
 
     def at_check(self):
         self.debug("Checking AT")
-        self.dCommandStates[AT_STATE].iState = 1
+        self.dPeriodicalChecks[AT_STATE].iState = 1
         self.send_command( "AT", { "OK" : self.set_at_ok_true } )
         return True
 
@@ -146,7 +146,7 @@ class UartModule(Module):
     """
 
     def set_at_ok_true(self, sResponse):
-        self.dCommandStates[AT_STATE].iState = 1
+        self.dPeriodicalChecks[AT_STATE].iState = 1
         self.debug("AT OK")
 
 

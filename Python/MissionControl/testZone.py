@@ -1,5 +1,6 @@
 from gsm_module import *
 from adc_module import *
+from gps_module import *
 import logging
 import sys
 import os
@@ -34,9 +35,13 @@ oLog.addHandler(oInfoHandler)
 oLog.addHandler(oWarningHandler)
 
 
-gsm = GsmModule(oLog)
+gsm = GsmModule(oLog, GSM_UART_PORT)
 gsm.setup()
 gsm.start()
+
+gps = GPSModule(oLog, GPS_UART_PORT)
+gps.setup()
+gps.start()
 
 adc = ADCModule(oLog)
 adc.setup()

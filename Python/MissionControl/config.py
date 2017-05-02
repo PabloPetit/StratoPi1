@@ -11,8 +11,8 @@ DEFAULT_MAIN_LOG_INTERVAL = datetime.timedelta(minutes = 3)
 
 LOG_FORMATTER = logging.Formatter("[ %(name)s - %(levelname)s ] %(asctime)s - %(message)s")
 
-#HOME_PATH = "/home/pi/Documents/MissionData/"
-HOME_PATH = "/Users/Pablo/Desktop/MissionData/"
+HOME_PATH = "/home/pi/Documents/MissionData/"
+#HOME_PATH = "/Users/Pablo/Desktop/MissionData/"
 
 DEFAULT_NAME = "ModuleName"
 
@@ -33,6 +33,9 @@ INFO_LOG_PATH = "info.log"
 WARNING_LOG_PATH = "warning.log"
 
 #@@@@@@@@@@@@@@ UART RELATED @@@@@@@@@@@@@@@@
+
+GSM_UART_PORT = '/dev/ttyUSB0'
+GPS_UART_PORT = '/dev/serial0'
 
 DEFAULT_UART_PORT = '/dev/cu.usbserial-A503S1B9'
 DEFAULT_UART_COMMAND_TIMEOUT = 1

@@ -2,7 +2,7 @@ from datetime import *
 from config import *
 
 
-class CommandState():
+class PeriodicalCheck():
 
     """
         This class represent a certain functional state of the module that must be frequently updated.
@@ -58,10 +58,10 @@ class CommandState():
 
 
 
-class ATState(CommandState):
+class ATState(PeriodicalCheck):
 
     def __init__(self, funCommand, fTimeout, sName):
-        CommandState.__init__(self, funCommand, fTimeout, sName)
+        PeriodicalCheck.__init__(self, funCommand, fTimeout, sName)
 
     def create_dict_state(self):
         self.dStates[0] = [0, "No Response"]
@@ -72,12 +72,12 @@ class ATState(CommandState):
 
 #  @@@@@@@@@@@@@@@@@@@@@@@@ BATTERY STATE  @@@@@@@@@@@@@@@@@@@@@
 
-class BatteryState(CommandState):
+class BatteryState(PeriodicalCheck):
 
 
     def __init__(self, funCommand, fTimeout, sName):
         i=0
-        CommandState.__init__(self, funCommand, fTimeout, sName)
+        PeriodicalCheck.__init__(self, funCommand, fTimeout, sName)
         self.iVoltage = 0
         self.iPercent = 0
 
@@ -105,10 +105,10 @@ class BatteryState(CommandState):
 #  @@@@@@@@@@@@@@@@@@@@@@@@ TEMPERATURE STATE  @@@@@@@@@@@@@@@@@@@@@
 
 # Note that the sensor might be broken on the sim ... 23.73 degres is the only value I can get
-class TemperatureState(CommandState):
+class TemperatureState(PeriodicalCheck):
 
     def __init__(self, funCommand, fTimeout, sName):
-        CommandState.__init__(self, funCommand, fTimeout, sName)
+        PeriodicalCheck.__init__(self, funCommand, fTimeout, sName)
         self.fDegres = -273.15
 
     def create_dict_state(self):
@@ -135,10 +135,10 @@ class TemperatureState(CommandState):
 
 #  @@@@@@@@@@@@@@@@@@@@@@@@ SIGNAL STATE  @@@@@@@@@@@@@@@@@@@@@
 
-class SignalState(CommandState):
+class SignalState(PeriodicalCheck):
 
     def __init__(self, funCommand, fTimeout, sName):
-        CommandState.__init__(self, funCommand, fTimeout, sName)
+        PeriodicalCheck.__init__(self, funCommand, fTimeout, sName)
         self.bConnected = False
         self.iStrenght = 0
 
@@ -170,10 +170,10 @@ class SignalState(CommandState):
 
 #  @@@@@@@@@@@@@@@@@@@@@@@@ SMS MODE STATE  @@@@@@@@@@@@@@@@@@@@@
 
-class CMGFState(CommandState):
+class CMGFState(PeriodicalCheck):
     # Associate with CMGF = 1
     def __init__(self, funCommand, fTimeout, sName):
-        CommandState.__init__(self, funCommand, fTimeout, sName)
+        PeriodicalCheck.__init__(self, funCommand, fTimeout, sName)
         self.iSmsMode = 0
 
     def create_dict_state(self):
@@ -196,10 +196,10 @@ class CMGFState(CommandState):
 #  @@@@@@@@@@@@@@@@@@@@@@@@      ADC STATE    @@@@@@@@@@@@@@@@@@@@@
 
 
-class ADCState(CommandState):
+class ADCState(PeriodicalCheck):
     # Associate with CMGF = 1
     def __init__(self, funCommand, fTimeout, sName):
-        CommandState.__init__(self, funCommand, fTimeout, sName)
+        PeriodicalCheck.__init__(self, funCommand, fTimeout, sName)
         self.iState = 1
 
         self.lTempBattery = [0, 0, 0]

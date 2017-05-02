@@ -24,8 +24,8 @@ class ADCModule(Module):
         GPIO.setup(SPICS, GPIO.OUT)
 
 
-    def create_command_states(self):
-        self.dCommandStates[ADC_STATE] = ADCState(self.check_adc, ADC_REFRESH_TIMEOUT, ADC_STATE)
+    def create_peridical_checks(self):
+        self.dPeriodicalChecks[ADC_STATE] = ADCState(self.check_adc, ADC_REFRESH_TIMEOUT, ADC_STATE)
 
     def check_adc(self):
 
@@ -37,7 +37,7 @@ class ADCModule(Module):
         lTempBattery = [iTempBattery, self.get_mV(iTempBattery), self.get_celsius(iTempBattery)]
         lTempOutside = [iTempOutside, self.get_mV(iTempOutside), self.get_celsius(iTempOutside)]
 
-        oAdc_state = self.dCommandStates[ADC_STATE]
+        oAdc_state = self.dPeriodicalChecks[ADC_STATE]
         oAdc_state.lUv = lUv
         oAdc_state.lTempBattery = lTempBattery
         oAdc_state.lTempOutside = lTempOutside
