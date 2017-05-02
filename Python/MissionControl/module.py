@@ -126,33 +126,33 @@ class Module( Thread ):
     def debug(self, sMessage, bForwardMain = False):
         self.oLog.debug(sMessage)
         if bForwardMain:
-            self.oMainLog.debug(sMessage)
+            self.oMainLog.debug(" [ "+self.name+" ] "+sMessage)
 
     def info(self, sMessage, bForwardMain = False):
         self.oLog.info(sMessage)
         if bForwardMain:
-            self.oMainLog.info(sMessage)
+            self.oMainLog.info(" [ " + self.name + " ] " + sMessage)
 
     def warning(self, sMessage, bForwardMain = True):
         self.oLog.warning(sMessage)
         if bForwardMain:
-            self.oMainLog.warning(sMessage)
+            self.oMainLog.warning(" [ " + self.name + " ] " + sMessage)
 
     def error(self, sMessage, bForwardMain = True):
         self.oLog.error(sMessage)
         if bForwardMain:
-            self.oMainLog.error(sMessage)
+            self.oMainLog.error(" [ " + self.name + " ] " + sMessage)
 
     def critical(self, sMessage, bForwardMain = True):
         self.oLog.critical(sMessage)
         if bForwardMain:
-            self.oMainLog.critical(sMessage)
+            self.oMainLog.critical(" [ " + self.name + " ] " + sMessage)
 
 
     def exception(self, sMessage, bForwardMain = True):
         self.oLog.exception(sMessage)
         if bForwardMain:
-            self.oMainLog.exception(sMessage)
+            self.oMainLog.exception(" [ " + self.name + " ] " + sMessage)
 
 
 

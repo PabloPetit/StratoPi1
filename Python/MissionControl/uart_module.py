@@ -50,8 +50,6 @@ class UartModule(Module):
         except serial.SerialException:
             self.exception("Value error when creating serial connection with uart module : ")
 
-        self.at_check()
-
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@ MODULE @@@@@@@@@@@@@@@@@@@@@@@@
 

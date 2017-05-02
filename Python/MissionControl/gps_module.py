@@ -31,13 +31,13 @@ class GPSModule(UartModule):
         super(GPSModule, self).setup()
 
     def create_peridical_checks(self):
-        self.dPeriodicalChecks[AT_STATE] = ATState(self.at_check, AT_REFRESH_TIMEOUT, AT_STATE)
+        pass
 
     def create_debuffer_dict(self):
         pass
 
     def check_self_integrity(self):
-        pass
+        return True
 
     def handle_no_integrity(self):
         pass
@@ -59,7 +59,6 @@ class GPSModule(UartModule):
 
     def read_GPRMC(self, sTrame):
         try:
-
 
             lValues = sTrame.split(',')
             dtDate = self.convert_GPS_time_to_datetime(lValues[1], lValues[9])

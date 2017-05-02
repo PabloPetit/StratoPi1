@@ -32,6 +32,7 @@ class GsmModule( UartModule ):
 
     def setup(self):
         super(GsmModule, self).setup()
+        self.at_check()
         self.set_CMGF_state()
         self.close_net_light()
 

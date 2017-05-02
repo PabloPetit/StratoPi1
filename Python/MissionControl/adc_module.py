@@ -34,8 +34,8 @@ class ADCModule(Module):
         iTempOutside = self.read_adc(TEMP_OUTSIDE_ADC_PIN)
 
         lUv = [ iUv, self.get_mV(iUv)]
-        lTempBattery = [iTempBattery, self.get_mV(iTempBattery), self.get_celsius(iTempBattery)]
-        lTempOutside = [iTempOutside, self.get_mV(iTempOutside), self.get_celsius(iTempOutside)]
+        lTempBattery = [iTempBattery, self.get_mV(iTempBattery), self.get_celsius(self.get_mV(iTempBattery))]
+        lTempOutside = [iTempOutside, self.get_mV(iTempOutside), self.get_celsius(self.get_mV(iTempOutside))]
 
         oAdc_state = self.dPeriodicalChecks[ADC_STATE]
         oAdc_state.lUv = lUv
