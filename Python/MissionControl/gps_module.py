@@ -31,7 +31,7 @@ class GPSModule(UartModule):
         super(GPSModule, self).setup()
 
     def create_peridical_checks(self):
-        pass
+        self.dPeriodicalChecks[AT_STATE] = ATState(self.at_check, AT_REFRESH_TIMEOUT, AT_STATE)
 
     def create_debuffer_dict(self):
         pass
