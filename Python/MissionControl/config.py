@@ -84,7 +84,7 @@ CMGF_REFRESH_TIMEOUT = 1
 #@@@@@@@@@@@@@@ SMS STUFF @@@@@@@@@@@@@@
 
 MAX_SMS_LENGHT = 140
-DEFAULT_MAX_TRY_TIME = datetime.timedelta( minutes = 5 )
+DEFAULT_MAX_TRY_TIME = timedelta( minutes = 5 )
 
 
 
