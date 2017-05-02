@@ -16,7 +16,7 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.37207487">
+    <splitter split-orientation="horizontal" split-proportion="0.49843994">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file leaf-file-name="adc_module.py" pinned="false" current-in-tab="false">
@@ -58,7 +58,7 @@
           <file leaf-file-name="gps_module.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/gps_module.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="525">
+                <state relative-caret-position="516">
                   <caret line="35" column="35" lean-forward="true" selection-start-line="35" selection-start-column="35" selection-end-line="35" selection-end-column="35" />
                   <folding>
                     <element signature="e#0#25#0" expanded="true" />
@@ -74,8 +74,8 @@
           <file leaf-file-name="periodical_check.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/periodical_check.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="584">
-                  <caret line="216" column="122" lean-forward="false" selection-start-line="216" selection-start-column="122" selection-end-line="216" selection-end-column="122" />
+                <state relative-caret-position="539">
+                  <caret line="215" column="21" lean-forward="false" selection-start-line="215" selection-start-column="21" selection-end-line="215" selection-end-column="21" />
                   <folding>
                     <element signature="e#0#22#0" expanded="true" />
                   </folding>
@@ -86,8 +86,8 @@
           <file leaf-file-name="module.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/module.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1500">
-                  <caret line="100" column="48" lean-forward="false" selection-start-line="100" selection-start-column="48" selection-end-line="100" selection-end-column="48" />
+                <state relative-caret-position="593">
+                  <caret line="122" column="31" lean-forward="true" selection-start-line="122" selection-start-column="31" selection-end-line="122" selection-end-column="31" />
                   <folding>
                     <element signature="e#0#23#0" expanded="true" />
                   </folding>
@@ -855,16 +855,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/module.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1500">
-          <caret line="100" column="48" lean-forward="false" selection-start-line="100" selection-start-column="48" selection-end-line="100" selection-end-column="48" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/uart_module.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
@@ -905,7 +895,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gps_module.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
+        <state relative-caret-position="516">
           <caret line="35" column="35" lean-forward="true" selection-start-line="35" selection-start-column="35" selection-end-line="35" selection-end-column="35" />
           <folding>
             <element signature="e#0#25#0" expanded="true" />
@@ -913,10 +903,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/module.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="593">
+          <caret line="122" column="31" lean-forward="true" selection-start-line="122" selection-start-column="31" selection-end-line="122" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/periodical_check.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="584">
-          <caret line="216" column="122" lean-forward="false" selection-start-line="216" selection-start-column="122" selection-end-line="216" selection-end-column="122" />
+        <state relative-caret-position="539">
+          <caret line="215" column="21" lean-forward="false" selection-start-line="215" selection-start-column="21" selection-end-line="215" selection-end-column="21" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
           </folding>

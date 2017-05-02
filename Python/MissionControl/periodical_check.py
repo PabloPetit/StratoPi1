@@ -215,6 +215,7 @@ class ADCState(PeriodicalCheck):
         sLog += "      UV : " +str(self.lUV[0])+", "+str(self.lUV[1])+"mV\n"
         sLog += "      Temp bat : " + str(self.lTempBattery[0]) + ", " + str(self.lTempBattery[1]) + "mV, "+str(self.lTempBattery[2])+" °C\n"
         sLog += "      Temp out : " + str(self.lTempOutside[0]) + ", " + str(self.lTempOutside[1]) + "mV, "+str(self.lTempOutside[2])+" °C\n"
+        return sLog
 
 
 
