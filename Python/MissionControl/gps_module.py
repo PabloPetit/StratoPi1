@@ -12,8 +12,10 @@ class GPSModule(UartModule):
 
         self.dqLastPositions = collections.deque(maxlen=GPS_MEMORY)
         self.dqLastAltitudes = collections.deque(maxlen=GPS_MEMORY)
+        self.dqLastCoursesOverGround = collections.deque(maxlen=GPS_MEMORY)
 
         self.fMaxAltitude = 0.0
+
         self.bOnDescent = False
 
         self.dTramePref = {
@@ -25,7 +27,6 @@ class GPSModule(UartModule):
             GPGSV : self.read_GPGSV
         }
 
-        t = 0
 
     def setup(self):
         super(GPSModule, self).setup()
@@ -40,6 +41,9 @@ class GPSModule(UartModule):
         return True
 
     def handle_no_integrity(self):
+        pass
+
+    def send_raw_log(self):
         pass
 
     def module_run(self):
@@ -59,26 +63,27 @@ class GPSModule(UartModule):
 
     def read_GPRMC(self, sTrame):
         try:
-
             lValues = sTrame.split(',')
             dtDate = self.convert_GPS_time_to_datetime(lValues[1], lValues[9])
+
             bDataValid = lValues[2] == 'A'
             sLatitude = lValues[3]
             sNSIndicator = lValues[4]
             sLongitude = lValues[5]
             sEWIndicator = lValues[6]
-            fSpeedOverGround = self.knots_to_kph(float(lValues[7]))
-            fCourseOverGround = float(lValues[8])
+
+            self.record_position(sLatitude, sNSIndicator, sLongitude, sEWIndicator, bDataValid)
+
+            try:
+                fSpeedOverGround = self.knots_to_kph(float(lValues[7])) # kph
+                fCourseOverGround = float(lValues[8]) # degres
+                self.record_course( fSpeedOverGround, fCourseOverGround )
+            except:
+                self.debug("No data for speed over ground or course over ground")
 
 
-            sLog = "Date : "+str(dtDate)+"\n"
-            sLog += "Valid : "+str(bDataValid)+"\n"
-            sLog += "Position : "+sLatitude+" "+sNSIndicator+" "+sLongitude+" "+sEWIndicator
-
-            self.info(sLog, (self.t %60==0) )
-            self.t+=1
         except Exception:
-            self.warning("Exception while parsing GPRMC trame : "+sTrame)
+            self.warning("Exception while parsing GPRMC trame : "+sTrame, False)
 
     def read_GPVTG(self, sTrame):
         pass
@@ -95,6 +100,18 @@ class GPSModule(UartModule):
     def read_GPGSV(self, sTrame):
         pass
 
+    def record_position(self, sLatitude, sNS, sLongitude, sEW, bValid):
+        if not bValid or sLatitude == "" or sNS == "" or sLongitude == "" or sEW == "":
+            return
+
+        sPos = sLatitude+','+sNS+','+sLongitude+','+sEW
+        self.dqLastPositions.appendleft([sPos, datetime.now()])
+
+    def record_course(self, fSpeed, fCourse):
+        # Check for invalid data
+        lData = [fSpeed, fCourse, datetime.now()]
+        self.dqLastCoursesOverGround.appendleft(lData)
+
     def convert_GPS_time_to_datetime(self, sTime, sDate):
         try:
             hms, millis = sTime.split('.')
@@ -108,6 +125,7 @@ class GPSModule(UartModule):
             y = int(sDate[4:6])
 
             return datetime( y, mth, d, h, m, s, millis)
+
         except Exception:
             self.warning("Wrong GPS Time data")
             return datetime.min

@@ -23,9 +23,16 @@ class ADCModule(Module):
         GPIO.setup(SPICLK, GPIO.OUT)
         GPIO.setup(SPICS, GPIO.OUT)
 
-
     def create_peridical_checks(self):
         self.dPeriodicalChecks[ADC_STATE] = ADCState(self.check_adc, ADC_REFRESH_TIMEOUT, ADC_STATE)
+
+    def send_raw_log(self): # Degres Bat, Degres Out, UV
+        try:
+            oADC = self.dPeriodicalChecks[ADC_STATE]
+            sRawLog = str(oADC.lTempBattery[2])+","+str(oADC.lTempOutside[2])+","+str(oADC.lUV[0])
+            self.oRawLog(sRawLog)
+        except:
+            self.warning("Error when sending raw log")
 
     def check_adc(self):
 

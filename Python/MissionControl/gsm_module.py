@@ -48,6 +48,15 @@ class GsmModule( UartModule ):
         #self.dDebuffer_dict[] = "GSM_IS_DEAD"
         pass
 
+    def send_raw_log(self): # BatPercent, BatVoltage, temp, signal
+        try:
+            oBat = self.dPeriodicalChecks[BATTERY_STATE]
+            oTemp = self.dPeriodicalChecks[TEMPERATURE_STATE]
+            oSign = self.dPeriodicalChecks[SIGNAL_STATE]
+            sRawLog = str(oBat.iPercent)+","+str(oBat.iVoltage)+","+str(oTemp.fDegres)+","+str(oSign.iStrenght)
+            self.oRawLog(sRawLog)
+        except:
+            self.warning("Error when sending raw log")
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ MODULE FUNCTIONS @@@@@@@@@@@@@@@@@@@
 
@@ -299,7 +308,7 @@ class SmsToSend():
     def log_str(self):
 
         sLog = "-- SMS S --\n"
-        sLog += "Numbers : "+str(self.sNumbers) + "\n"
+        sLog += "Numbers : "+str(self.lNumbers) + "\n"
         sLog += "Created : "+str(self.dtCreationDate) + "\n"
         sLog += "Last try : "+str(self.dtLastSendTry) + "\n"
         sLog += "State : " + str(self.iSendState) + "\n"

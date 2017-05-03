@@ -10,11 +10,14 @@ LOG_FILE_ROTATION_MINUTES = 15#30
 DEFAULT_MAIN_LOG_INTERVAL = timedelta(minutes = 3)
 
 LOG_FORMATTER = logging.Formatter("[ %(name)s - %(levelname)s ] %(asctime)s - %(message)s")
+RAW_LOG_FORMATTER = logging.Formatter("%(asctime)s --- %(message)s")
 
 HOME_PATH = "/home/pi/Documents/MissionData/"
 #HOME_PATH = "/Users/Pablo/Desktop/MissionData/"
 
 DEFAULT_NAME = "ModuleName"
+
+RAW_NAME = "_RAW"
 
 MAIN_LOG_NAME = "Main"
 GSM_NAME = "GSM"
@@ -31,6 +34,7 @@ MAIN_LOG_PATH = HOME_PATH + MAIN_LOG_NAME + '/'
 DEBUG_LOG_PATH = "debug.log"
 INFO_LOG_PATH = "info.log"
 WARNING_LOG_PATH = "warning.log"
+RAW_LOG_PATH = "raw.log"
 
 #@@@@@@@@@@@@@@ UART RELATED @@@@@@@@@@@@@@@@
 

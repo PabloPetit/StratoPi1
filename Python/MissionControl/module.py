@@ -21,9 +21,11 @@ class Module( Thread ):
         self.dtInitDate = datetime.now()
         self.dtLastMainLogDate = datetime.min
         self.oLog = None
+        self.oRawLog = None
         self.oMainLog = oMainLog
         self.oDebugHandler = None
         self.oInfoHandler= None
+        self.oRawHandler = None
 
         # ATTRIBUTS TO REDEFINE
 
@@ -51,16 +53,25 @@ class Module( Thread ):
                                                                        interval=LOG_FILE_ROTATION_MINUTES,
                                                                        encoding="utf-8")
 
+        self.oRawHandler = logging.handlers.TimedRotatingFileHandler(self.sLogPath + RAW_LOG_PATH, when="m",
+                                                                      interval=LOG_FILE_ROTATION_MINUTES,
+                                                                      encoding="utf-8")
+
         self.oDebugHandler.setFormatter(LOG_FORMATTER)
         self.oInfoHandler.setFormatter(LOG_FORMATTER)
+        self.oRawHandler.setFormatter(RAW_LOG_FORMATTER)
 
         self.oDebugHandler.setLevel(logging.DEBUG)
         self.oInfoHandler.setLevel(logging.INFO)
+        self.oRawHandler.setLevel(logging.DEBUG)
 
         self.oLog = logging.getLogger(self.name)
         self.oLog.setLevel(logging.DEBUG) # Acceptes everthings, filter done with handlers
+        self.oRawLog = logging.getLogger(self.name+RAW_NAME)
+
         self.oLog.addHandler(self.oDebugHandler)
         self.oLog.addHandler(self.oInfoHandler)
+        self.oRawLog.addHandler(self.oRawHandler)
 
 
     def create_peridical_checks(self):
@@ -116,6 +127,9 @@ class Module( Thread ):
 
 
 # @@@@@@@@@@@@@@@ LOG FUNCTIONS @@@@@@@@@@@@@@@@@@@@@@@@
+
+    def send_raw_log(self):
+        raise NotImplementedError("Send raw should be redifined")
 
     def send_log(self, bForwardMain):
         sLog = "  --[ "+self.name+" CURRENT STATE ]---\n"
