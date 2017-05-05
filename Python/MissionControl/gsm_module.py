@@ -28,6 +28,10 @@ class GsmModule( UartModule ):
 
         self.oCurrentSmsMessage = None
 
+        # Reset
+        self.dtATCheckNotPassed = None
+        self.dtZeroByteReceived = None
+        self.dtLastHardReset = None
 
 
     def setup(self):
@@ -44,9 +48,8 @@ class GsmModule( UartModule ):
         self.dPeriodicalChecks[CMGF_STATE] = CMGFState(self.set_CMGF_state, CMGF_REFRESH_TIMEOUT, CMGF_STATE)
 
     def create_debuffer_dict(self):
-        #self.dDebuffer_dict[str(B_NULL)] = "GSM_IS_DEAD"
-        #self.dDebuffer_dict[] = "GSM_IS_DEAD"
-        pass
+        self.dDebuffer_dict[str(B_NULL)] = self.zero_byte
+
 
     def send_raw_log(self): # BatPercent, BatVoltage, temp, signal
         try:
@@ -61,15 +64,69 @@ class GsmModule( UartModule ):
 # @@@@@@@@@@@@@@@@@@@@@@@@ MODULE FUNCTIONS @@@@@@@@@@@@@@@@@@@
 
     def check_self_integrity(self):
-        return self.dPeriodicalChecks[AT_STATE].iState > 0
+
+        bAtState = self.dPeriodicalChecks[AT_STATE].iState > 0
+        bZeroByte = self.dtZeroByteReceived is None
+
+        if bAtState:
+            self.dtATCheckNotPassed = None
+            self.dtZeroByteReceived = None
+        elif self.dtATCheckNotPassed is None:
+            self.critical("Setting AT check not passed")
+            self.dtATCheckNotPassed = datetime.now()
+
+        return bAtState and bZeroByte
+
+
 
     def handle_no_integrity(self):
-        pass
+
+        dtRefDate = None
+
+        if self.dtZeroByteReceived and self.dtATCheckNotPassed:
+            dtRefDate = min(self.dtZeroByteReceived, self.dtATCheckNotPassed)
+        elif self.dtZeroByteReceived:
+            dtRefDate = self.dtZeroByteReceived
+        elif self.dtATCheckNotPassed:
+            dtRefDate = self.dtATCheckNotPassed
+        else:
+            self.critical("CODE ERROR - Should not happened. Reference date not found for handle_no_integrity")
+
+
+        if dtRefDate:
+
+            tHardResetCountdown = GSM_HARD_RESET_DELAY - ( datetime.now() - dtRefDate )
+            self.critical("Handling no integrity\n" +
+                          "        AT check not passed at : " + str(self.dtATCheckNotPassed) +
+                          "        Zero byte received at : " +str(self.dtZeroByteReceived) +
+                          "        Remaining Time Before Hard Reset : "+str(tHardResetCountdown))
+
+            if tHardResetCountdown < 0: # WRRRROOOOOOOONNNG testing to do
+                self.hard_reset()
+
+        else:
+            pass
+
+
+
+
+
+    def zero_byte(self, sResponse):
+        self.critical("Zero byte received")
+        if self.dtZeroByteReceived is None:
+            self.critical("Setting zero byte receive date")
+            self.dtZeroByteReceived = datetime.now()
 
     def module_run(self):
 
         self.manage_sms_queue()
         self.manage_sms_reception()
+
+# @@@@@@@@@@@@@@@@@@@@@@@@ HARD RESET @@@@@@@@@@@@@@@@@@@@@
+
+
+    def hard_reset(self):
+        pass
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@ COMMANDS @@@@@@@@@@@@@@@@@@@@@@@@@
@@ -136,17 +193,23 @@ class GsmModule( UartModule ):
         if  self.qSms_to_send.empty():
             return
 
-        oSms = self.qSms_to_send.get()
+        try:
+            oSms = self.qSms_to_send.get()
 
-        for n in oSms.lNumbers:
-            self.send_sms(oSms, n)
+            for n in oSms.lNumbers:
+                self.send_sms(oSms, n)
+        except:
+            self.exception("Exception while managing sms to send queue")
 
 
     def send_sms(self, oSms, sNumber):
-        self.oCurrentSmsMessage = oSms
-        self.oCurrentSmsMessage.dtLastSendTry = datetime.now()
-        sCom = "AT+CMGS=\""+sNumber+"\""
-        self.send_command(sCom, {'>' : self.write_sms, "ERROR" : self.sms_send_error})
+        try:
+            self.oCurrentSmsMessage = oSms
+            self.oCurrentSmsMessage.dtLastSendTry = datetime.now()
+            sCom = "AT+CMGS=\""+sNumber+"\""
+            self.send_command(sCom, {'>' : self.write_sms, "ERROR" : self.sms_send_error})
+        except:
+            self.exception("Exception while trying to send sms")
 
     def write_sms(self, sResponse):
         try:
@@ -225,7 +288,6 @@ class GsmModule( UartModule ):
 
     """
         Response function have to take the response string as an argument, to avoid TypeError exception
-        Also, do not forget to set the iState Value at the end of the function
     """
 
     #Response type : +CBC: 0,85,4087
@@ -252,7 +314,7 @@ class GsmModule( UartModule ):
             self.debug("Temperature : " + str(tempState.fDegres))
         except Exception:
             self.dPeriodicalChecks[TEMPERATURE_STATE].iState = -1
-            self.exception("An error occured while reading temperature : \n" )
+            self.exception("An error occured while reading temperature : \n")
 
     # Response type : +CSQ: 15,0
     def read_signal_strength(self, sResponse):
@@ -276,6 +338,8 @@ class GsmModule( UartModule ):
             if value == "OK":
                 CMGFState.iSmsMode = 1
                 self.debug("CMFG STATE is 1")
+            else:
+                self.warning("No OK response received on CMFG request : "+value)
         except Exception:
             self.exception("An error occured while reading battery CMFG state : \n")
 
@@ -286,6 +350,8 @@ class GsmModule( UartModule ):
             value = sResponse.split()[0]
             if value == "OK":
                 self.info("Netlight is OFF")
+            else:
+                self.warning("No OK response received on NETLIGHT OFF request : " + value)
         except Exception:
             self.exception("An error occured while reading netlight response : \n" )
 

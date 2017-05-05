@@ -67,6 +67,9 @@ CAMERA_UPDATE_DELAY = 3
 
 # GSM MODULE :
 
+GSM_HARD_RESET_DELAY = timedelta(minutes=3)
+
+
 #Debug :
 BATTERY_REFRESH_TIMEOUT = 1
 TEMPERATURE_REFRESH_TIMEOUT = 1
@@ -85,7 +88,7 @@ SMS_REFRESH_TIMEOUT = 120
 CMGF_REFRESH_TIMEOUT = 1
 """
 
-#@@@@@@@@@@@@@@ SMS STUFF @@@@@@@@@@@@@@
+#@@@@@@@@@@@@@@ SMS RELATED @@@@@@@@@@@@@@
 
 MAX_SMS_LENGHT = 140
 DEFAULT_MAX_TRY_TIME = timedelta( minutes = 5 )
@@ -98,6 +101,8 @@ SPICLK = 23
 SPIMISO = 21
 SPIMOSI = 19
 SPICS = 24
+
+GSM_RESET_PIN = 42
 
 
 TEMP_BATTERY_ADC_PIN = 0

@@ -11,7 +11,7 @@ class GPSModule(UartModule):
         self.fUpdateDelay = GPS_UPDATE_DELAY
 
         self.dqLastPositions = collections.deque(maxlen=GPS_MEMORY)
-        self.dqLastAltitudes = collections.deque(maxlen=GPS_MEMORY)
+        self.dqLastAltitudes = collections.deque(maxlen=GPS_MEMORY) # [ MSL, GEO, DATE ]
         self.dqLastCoursesOverGround = collections.deque(maxlen=GPS_MEMORY)
 
         self.fMaxAltitude = 0.0
@@ -89,7 +89,18 @@ class GPSModule(UartModule):
         pass
 
     def read_GPGGA(self, sTrame):
-        pass
+        try:
+            lValues = sTrame.split(',')
+
+            sLatitude = lValues[2]
+            sNSIndicator = lValues[3]
+            sLongitude = lValues[4]
+            sEWIndicator = lValues[5]
+
+            self.record_position(sLatitude, sNSIndicator, sLongitude, sEWIndicator)
+
+        except:
+            self.warning("Exception while parsing GPGGA trame : " + sTrame, False)
 
     def read_GPGLL(self, sTrame):
         pass
@@ -100,7 +111,7 @@ class GPSModule(UartModule):
     def read_GPGSV(self, sTrame):
         pass
 
-    def record_position(self, sLatitude, sNS, sLongitude, sEW, bValid):
+    def record_position(self, sLatitude, sNS, sLongitude, sEW, bValid = True):
         if not bValid or sLatitude == "" or sNS == "" or sLongitude == "" or sEW == "":
             return
 
@@ -111,6 +122,10 @@ class GPSModule(UartModule):
         # Check for invalid data
         lData = [fSpeed, fCourse, datetime.now()]
         self.dqLastCoursesOverGround.appendleft(lData)
+
+    def record_altitude(self, fMSL, fGeoid):
+        pass
+
 
     def convert_GPS_time_to_datetime(self, sTime, sDate):
         try:

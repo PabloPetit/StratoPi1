@@ -94,6 +94,7 @@ class Module( Thread ):
                     self.dtLastMainLogDate = datetime.now()
                 else:
                     self.send_log(False)
+                self.send_raw_log()
 
             time.sleep( self.fUpdateDelay )
         self.warning("Run Finished")
