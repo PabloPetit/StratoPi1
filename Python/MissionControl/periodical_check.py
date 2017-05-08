@@ -1,5 +1,6 @@
 from datetime import *
 from config import *
+from threading import *
 
 
 class PeriodicalCheck():
@@ -39,6 +40,7 @@ class PeriodicalCheck():
         self.bIsOn = True
         self.dStates = {}
         self.create_dict_state()
+        self.oLock = Lock()
 
     def create_dict_state(self):
         raise NotImplementedError("Create dict states not implemented")
@@ -221,8 +223,33 @@ class ADCState(PeriodicalCheck):
 
 
 
+class MemoryState(PeriodicalCheck):
 
 
+    def __init__(self, funCommand, fTimeout, sName):
+        PeriodicalCheck.__init__(self, funCommand, fTimeout, sName)
+        self.fSize = 0
+        self.fUsed = 0
+        self.fAvailable = 0
+        self.fPercentUsed = 0
+
+        # Except for iPercent, values are stored in GigaBytes
+
+
+    def create_dict_state(self):
+
+        #State if based on percent of memory left
+
+        self.dStates = {
+            0: [ 97, "DANGEROUSLY_LOW_MEMORY" ],
+            1: [ 93, "VERY_LOW_MEMORY"],
+            2: [ 85, "LOW_MEMORY"],
+            3: [ 60, "MEDIUM_MEMORY"],
+            4: [ 0,  "HIGH_MEMORY"]
+        }
+
+    def set_state(self):
+        pass
 
 
 

@@ -8,6 +8,7 @@ import logging.handlers
 import time
 import sys
 import os
+from main import *
 
 
 class Module( Thread ):
@@ -17,7 +18,6 @@ class Module( Thread ):
         Thread.__init__( self)
         self.bStop = False # Use to force a module shutdown
         self.dPeriodicalChecks = {}
-        self.create_peridical_checks()
         self.dtInitDate = datetime.now()
         self.dtLastMainLogDate = datetime.min
         self.oLog = None
@@ -38,6 +38,12 @@ class Module( Thread ):
 
     def setup(self):
         self.setup_logger()
+        self.create_periodical_checks()
+
+    def add_periodical_checks(self, oPer, sName):
+        global dMainPeriodicalChecks
+        self.dPeriodicalChecks[sName] = oPer
+        dMainPeriodicalChecks[sName+"_"+self.name] = oPer
 
 
     def setup_logger(self):
@@ -74,7 +80,7 @@ class Module( Thread ):
         self.oRawLog.addHandler(self.oRawHandler)
 
 
-    def create_peridical_checks(self):
+    def create_periodical_checks(self):
         raise NotImplementedError("create_command_states not implemented")
 
     def run(self):
@@ -89,7 +95,7 @@ class Module( Thread ):
             else:
                 self.debug("Integrity check passed")
                 self.module_run()
-                if datetime.now() - self.dtLastMainLogDate > self.tMainLogInterval :
+                if datetime.now() - self.dtLastMainLogDate > self.tMainLogInterval:
                     self.send_log(True)
                     self.dtLastMainLogDate = datetime.now()
                 else:
@@ -97,22 +103,31 @@ class Module( Thread ):
                 self.send_raw_log()
 
             time.sleep( self.fUpdateDelay )
-        self.warning("Run Finished")
+        self.info("Run Finished", True)
 
     def evaluate_periodical_checks(self):
         self.debug("Evaluating Periodical Checks ...")
         for oCom in self.dPeriodicalChecks.values():
-            if oCom.bIsOn:
-                tdTimeDelta = datetime.now() - oCom.dtLastCheck
-                fDeltaSeconds = tdTimeDelta.total_seconds()
+            oCom.oLock.acquire(timeout=ACQUIRE_TIMEOUT)
+            try:
+                if oCom.bIsOn:
+                    tdTimeDelta = datetime.now() - oCom.dtLastCheck
+                    fDeltaSeconds = tdTimeDelta.total_seconds()
 
-                if fDeltaSeconds > oCom.fTimeout:
-                    oCom.funCommand()
-                    oCom.set_state()
-                    oCom.dtLastCheck = datetime.now()
+                    if fDeltaSeconds > oCom.fTimeout:
+                        oCom.funCommand()
+                        oCom.set_state()
+                        oCom.dtLastCheck = datetime.now()
+            except:
+                self.exception("Exception while evaluating "+oCom.sName)
+            finally:
+                oCom.oLock.release()
         self.debug("Evaluating Periodical Checks Done")
 
 
+    def stop_module(self):
+        self.bStop = True
+        self.info("Module Stopped", True)
 
     def stop_condition(self):
         return self.bStop
@@ -135,7 +150,13 @@ class Module( Thread ):
     def send_log(self, bForwardMain):
         sLog = "  --[ "+self.name+" CURRENT STATE ]---\n"
         for oCom in self.dPeriodicalChecks.values():
-            sLog+="        "+oCom.log_str()+"\n"
+            oCom.oLock.acquire(timeout=ACQUIRE_TIMEOUT)
+            try:
+                sLog+="        "+oCom.log_str()+"\n"
+            except:
+                self.exception("Exception while sending log")
+            finally:
+                oCom.oLock.release()
         self.info(sLog,bForwardMain)
 
     def debug(self, sMessage, bForwardMain = False):

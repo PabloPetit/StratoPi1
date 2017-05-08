@@ -41,25 +41,33 @@ class GsmModule( UartModule ):
         self.close_net_light()
 
     def create_peridical_checks(self):
-        self.dPeriodicalChecks[AT_STATE] = ATState(self.at_check, AT_REFRESH_TIMEOUT, AT_STATE)
-        self.dPeriodicalChecks[BATTERY_STATE] = BatteryState(self.check_battery, BATTERY_REFRESH_TIMEOUT, BATTERY_STATE)
-        self.dPeriodicalChecks[TEMPERATURE_STATE] = TemperatureState(self.check_temperature, TEMPERATURE_REFRESH_TIMEOUT, TEMPERATURE_STATE)
-        self.dPeriodicalChecks[SIGNAL_STATE] = SignalState(self.check_signal_strenght, SIGNAL_REFRESH_TIMEOUT, SIGNAL_STATE)
-        self.dPeriodicalChecks[CMGF_STATE] = CMGFState(self.set_CMGF_state, CMGF_REFRESH_TIMEOUT, CMGF_STATE)
+        self.add_periodical_checks(AT_STATE, ATState(self.at_check, AT_REFRESH_TIMEOUT, AT_STATE))
+        self.add_periodical_checks(BATTERY_STATE, BatteryState(self.check_battery, BATTERY_REFRESH_TIMEOUT, BATTERY_STATE))
+        self.add_periodical_checks(TEMPERATURE_STATE, TemperatureState(self.check_temperature, TEMPERATURE_REFRESH_TIMEOUT, TEMPERATURE_STATE))
+        self.add_periodical_checks(SIGNAL_STATE, SignalState(self.check_signal_strenght, SIGNAL_REFRESH_TIMEOUT, SIGNAL_STATE))
+        self.add_periodical_checks(CMGF_STATE, CMGFState(self.set_CMGF_state, CMGF_REFRESH_TIMEOUT, CMGF_STATE))
 
     def create_debuffer_dict(self):
         self.dDebuffer_dict[str(B_NULL)] = self.zero_byte
-
+        #Message received log ?
 
     def send_raw_log(self): # BatPercent, BatVoltage, temp, signal
+        oBat = self.dPeriodicalChecks[BATTERY_STATE]
+        oTemp = self.dPeriodicalChecks[TEMPERATURE_STATE]
+        oSign = self.dPeriodicalChecks[SIGNAL_STATE]
+
+        oBat.oLock.acquire(ACQUIRE_TIMEOUT)
+        oTemp.oLock.acquire(ACQUIRE_TIMEOUT)
+        oSign.oLock.acquire(ACQUIRE_TIMEOUT)
         try:
-            oBat = self.dPeriodicalChecks[BATTERY_STATE]
-            oTemp = self.dPeriodicalChecks[TEMPERATURE_STATE]
-            oSign = self.dPeriodicalChecks[SIGNAL_STATE]
             sRawLog = str(oBat.iPercent)+","+str(oBat.iVoltage)+","+str(oTemp.fDegres)+","+str(oSign.iStrenght)
             self.oRawLog(sRawLog)
         except:
             self.warning("Error when sending raw log")
+        finally:
+            oBat.oLock.release()
+            oTemp.oLock.release()
+            oSign.oLock.release()
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ MODULE FUNCTIONS @@@@@@@@@@@@@@@@@@@
 
@@ -77,8 +85,6 @@ class GsmModule( UartModule ):
 
         return bAtState and bZeroByte
 
-
-
     def handle_no_integrity(self):
 
         dtRefDate = None
@@ -90,8 +96,7 @@ class GsmModule( UartModule ):
         elif self.dtATCheckNotPassed:
             dtRefDate = self.dtATCheckNotPassed
         else:
-            self.critical("CODE ERROR - Should not happened. Reference date not found for handle_no_integrity")
-
+            self.critical("CODE ERROR - Should not happen. Reference date not found for handle_no_integrity")
 
         if dtRefDate:
 
@@ -101,11 +106,9 @@ class GsmModule( UartModule ):
                           "        Zero byte received at : " +str(self.dtZeroByteReceived) +
                           "        Remaining Time Before Hard Reset : "+str(tHardResetCountdown))
 
-            if tHardResetCountdown < 0: # WRRRROOOOOOOONNNG testing to do
+            if tHardResetCountdown.days < 0:
                 self.hard_reset()
 
-        else:
-            pass
 
 
 
@@ -126,7 +129,10 @@ class GsmModule( UartModule ):
 
 
     def hard_reset(self):
-        pass
+        self.critical("HARD RESET")
+        self.dtATCheckNotPassed = None
+        self.dtZeroByteReceived = None
+        self.dtLastHardReset = datetime.now()
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@ COMMANDS @@@@@@@@@@@@@@@@@@@@@@@@@

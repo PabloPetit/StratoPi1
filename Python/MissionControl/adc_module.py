@@ -14,25 +14,21 @@ class ADCModule(Module):
 
     def setup(self):
         super(ADCModule, self).setup()
-        # Be carreful to avoid conflicts with gpios
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setwarnings(False)
 
-        GPIO.setup(SPIMOSI, GPIO.OUT)
-        GPIO.setup(SPIMISO, GPIO.IN)
-        GPIO.setup(SPICLK, GPIO.OUT)
-        GPIO.setup(SPICS, GPIO.OUT)
 
     def create_peridical_checks(self):
-        self.dPeriodicalChecks[ADC_STATE] = ADCState(self.check_adc, ADC_REFRESH_TIMEOUT, ADC_STATE)
+        self.add_periodical_checks(ADC_STATE, ADCState(self.check_adc, ADC_REFRESH_TIMEOUT, ADC_STATE))
 
     def send_raw_log(self): # Degres Bat, Degres Out, UV
+        oADC = self.dPeriodicalChecks[ADC_STATE]
+        oADC.oLock().acquire(timeout=ACQUIRE_TIMEOUT)
         try:
-            oADC = self.dPeriodicalChecks[ADC_STATE]
             sRawLog = str(oADC.lTempBattery[2])+","+str(oADC.lTempOutside[2])+","+str(oADC.lUV[0])
             self.oRawLog(sRawLog)
         except:
             self.warning("Error when sending raw log")
+        finally:
+            oADC.oLock().release()
 
     def check_adc(self):
 
