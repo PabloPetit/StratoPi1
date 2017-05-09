@@ -80,8 +80,8 @@ class BatteryState(PeriodicalCheck):
     def __init__(self, funCommand, fTimeout, sName):
         i=0
         PeriodicalCheck.__init__(self, funCommand, fTimeout, sName)
-        self.iVoltage = 0
-        self.iPercent = 0
+        self.iVoltage = -1
+        self.iPercent = -1
 
     def create_dict_state(self):
         self.dStates = {
@@ -142,7 +142,7 @@ class SignalState(PeriodicalCheck):
     def __init__(self, funCommand, fTimeout, sName):
         PeriodicalCheck.__init__(self, funCommand, fTimeout, sName)
         self.bConnected = False
-        self.iStrenght = 0
+        self.iStrenght = -1
 
     def create_dict_state(self):
         self.dStates = {

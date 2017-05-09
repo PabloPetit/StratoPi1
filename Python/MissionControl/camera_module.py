@@ -28,6 +28,8 @@ class CameraModule(Module):
     def send_raw_log(self):
         pass
 
+    def evaluate_module_ready(self):
+        return True
 
 
     def module_run(self):

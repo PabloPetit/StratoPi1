@@ -17,6 +17,7 @@ class Module( Thread ):
 
         Thread.__init__( self)
         self.bStop = False # Use to force a module shutdown
+        self.bIsReady = False
         self.dPeriodicalChecks = {}
         self.dtInitDate = datetime.now()
         self.dtLastMainLogDate = datetime.min
@@ -37,13 +38,15 @@ class Module( Thread ):
 
 
     def setup(self):
+        global dModules
         self.setup_logger()
         self.create_periodical_checks()
+        dModules[self.name] = self
 
     def add_periodical_checks(self, oPer, sName):
         global dMainPeriodicalChecks
         self.dPeriodicalChecks[sName] = oPer
-        dMainPeriodicalChecks[sName+"_"+self.name] = oPer
+        dMainPeriodicalChecks[sName] = oPer
 
 
     def setup_logger(self):
@@ -89,6 +92,14 @@ class Module( Thread ):
             self.debug("Begin Loop")
             self.evaluate_periodical_checks()
 
+            if not self.bIsReady: # Only at startup
+                self.info("Evaluating if ready :")
+                self.evaluate_module_ready()
+                if self.bIsReady:
+                    self.info("Ready")
+                else:
+                    self.info("Not ready")
+
             if not self.check_self_integrity():
                 self.error("Integrity check not passed")
                 self.handle_no_integrity()
@@ -123,6 +134,10 @@ class Module( Thread ):
             finally:
                 oCom.oLock.release()
         self.debug("Evaluating Periodical Checks Done")
+
+
+    def evaluate_module_ready(self):
+        raise NotImplementedError("evaluate_module_ready not implemented")
 
 
     def stop_module(self):

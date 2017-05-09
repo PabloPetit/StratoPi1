@@ -1,5 +1,5 @@
 from uart_module import *
-
+import RPi.GPIO as GPIO
 
 class GsmModule( UartModule ):
 
@@ -15,15 +15,9 @@ class GsmModule( UartModule ):
 
         self.dSms_commands = {
             "STATE" : self.send_state,
+            "CONFIRM" : self.confirm_network,
             "REG" : self.register_numbers
             #"END_MISSION" : self.end_mission
-        }
-
-        self.dTelephone_numbers = {
-            "PABLO" : "0645160520",
-            "DOUDOU" : "0645224118",
-            "ROBIN" : "0646773226",
-            "THIBAULT" : "0781856866"
         }
 
         self.oCurrentSmsMessage = None
@@ -71,6 +65,13 @@ class GsmModule( UartModule ):
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ MODULE FUNCTIONS @@@@@@@@@@@@@@@@@@@
 
+
+    def evaluate_module_ready(self):
+        oSignalState = self.dPeriodicalChecks[SIGNAL_STATE]
+        oCMFGState = self.dPeriodicalChecks[CMGF_STATE]
+        self.bIsReady = oCMFGState.iState > 0 and oSignalState.iStrenght > READY_MINIMAL_SIGNAL
+
+
     def check_self_integrity(self):
 
         bAtState = self.dPeriodicalChecks[AT_STATE].iState > 0
@@ -111,9 +112,6 @@ class GsmModule( UartModule ):
 
 
 
-
-
-
     def zero_byte(self, sResponse):
         self.critical("Zero byte received")
         if self.dtZeroByteReceived is None:
@@ -133,6 +131,12 @@ class GsmModule( UartModule ):
         self.dtATCheckNotPassed = None
         self.dtZeroByteReceived = None
         self.dtLastHardReset = datetime.now()
+        self.critical("Pulling Reset cicuit to ground for : "+str(GSM_RESET_HIGH_LEVEL_TIME)+" seconds ...")
+        GPIO.output(GSM_RESET_PIN, GPIO.HIGH)
+        time.sleep(GSM_RESET_HIGH_LEVEL_TIME)
+        GPIO.output(GSM_RESET_PIN, GPIO.LOW)
+        self.critical("Hard reset done")
+
 
 
 # @@@@@@@@@@@@@@@@@@@@@@@ COMMANDS @@@@@@@@@@@@@@@@@@@@@@@@@
@@ -266,9 +270,29 @@ class GsmModule( UartModule ):
             self.exception("An error occured while trying to send current state : \n")
 
     def register_numbers(self, oSms):
-        #Register the numbers in the sms
-        #send ACK
-        pass
+        try:
+            self.info("Registrering numbers")
+            global dTelephone_numbers
+            lNumbers = oSms.sMessage.split()
+            lNumbers = lNumbers[1:]
+            for num in lNumbers:
+                if self.is_valid_number(num):
+                    sIndex = "NUM"+str(len(dTelephone_numbers.keys()))
+                    dTelephone_numbers[sIndex] = num
+                    self.info(num+" registerd")
+                else:
+                    self.warning("Invalid number : "+num)
+        except:
+            self.exception("Exception while reading REG sms")
+
+    def is_valid_number(self, number):
+        return True
+
+    def confirm_network(self, oSms):
+        self.info("Network Confirmation SMS received")
+        global bConfirmSMSReceived
+        bConfirmSMSReceived = True
+         
 
 
 # @@@@@@@@@@@@@@@@@@@@@@ COMMAND STATES @@@@@@@@@@@@@@@@@@@@@@@@

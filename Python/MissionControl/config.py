@@ -36,10 +36,20 @@ RAW_LOG_PATH = "raw.log"
 CAMERA_CAPTURE_PATH = "Captures/"
 CAMERA_VIDEO_PATH = "Videos/"
 
-#@@@@@@@@@@@@@@ SMS RELATED @@@@@@@@@@@@@@
+#@@@@@@@@@@@@@@ SMS AND GSM RELATED @@@@@@@@@@@@@@
 
+READY_MINIMAL_SIGNAL = 5
 MAX_SMS_LENGHT = 140
 DEFAULT_MAX_TRY_TIME = timedelta( minutes = 5 )
+
+GSM_RESET_HIGH_LEVEL_TIME = 0.3
+
+dTelephone_numbers = {
+            "PABLO" : "0645160520",
+            "DOUDOU" : "0645224118",
+            "ROBIN" : "0646773226",
+            "THIBAULT" : "0781856866"
+        }
 
 
 #@@@@@@@@@@@ MODULE RELATED  @@@@@@@@@@@@@@@@
@@ -176,6 +186,14 @@ class CameraSetting():
         self.tVideoDuration = tVideoDuration
 
 
+#  @@@@@@@@@@@@@@@@@@@ MAIN STARTUP @@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+WAIT_FOR_STARTUP_SLEEP = 5
+WAIT_FOR_CONFIRMATION_SMS_SLEEP = 5
+WAIT_FOR_MISSION_LAUNCH_SLEEP = 0.05
+
+CONFIRMATION_BLINK_INTERVAL = 0.5
+CONFIRMATION_BLINK_TIME = timedelta(seconds=10)
 
 
 

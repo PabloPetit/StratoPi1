@@ -15,6 +15,8 @@ class ADCModule(Module):
     def setup(self):
         super(ADCModule, self).setup()
 
+    def evaluate_module_ready(self):
+        return True
 
     def create_peridical_checks(self):
         self.add_periodical_checks(ADC_STATE, ADCState(self.check_adc, ADC_REFRESH_TIMEOUT, ADC_STATE))
