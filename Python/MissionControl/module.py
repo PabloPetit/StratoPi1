@@ -105,15 +105,21 @@ class Module( Thread ):
                 self.handle_no_integrity()
             else:
                 self.debug("Integrity check passed")
+                self.debug("Begin Module Run")
                 self.module_run()
+                self.debug("End Module Run")
                 if datetime.now() - self.dtLastMainLogDate > self.tMainLogInterval:
+                    self.debug("Log sent to Main")
                     self.send_log(True)
                     self.dtLastMainLogDate = datetime.now()
                 else:
+                    self.debug("Log sent not to Main")
                     self.send_log(False)
                 self.send_raw_log()
 
+            self.debug("Sleeping for : "+str(self.fUpdateDelay)+" seconds")
             time.sleep( self.fUpdateDelay )
+
         self.info("Run Finished", True)
 
     def evaluate_periodical_checks(self):
@@ -143,6 +149,9 @@ class Module( Thread ):
     def stop_module(self):
         self.bStop = True
         self.info("Module Stopped", True)
+
+    def end_run(self):
+        pass
 
     def stop_condition(self):
         return self.bStop

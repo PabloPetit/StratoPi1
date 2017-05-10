@@ -119,10 +119,12 @@ class GsmModule( UartModule ):
             self.dtZeroByteReceived = datetime.now()
 
     def module_run(self):
-
         self.manage_sms_queue()
         self.manage_sms_reception()
 
+    def end_run(self):
+        #TODO: Send AT+CPOWD=1
+        pass
 # @@@@@@@@@@@@@@@@@@@@@@@@ HARD RESET @@@@@@@@@@@@@@@@@@@@@
 
 

@@ -47,27 +47,16 @@ class CameraModule(Module):
     def evaluate_module_ready(self):
         return self.oCam is not None and self.bCaptureOk
 
+    def end_run(self):
+        if self.oCam:
+            try:
+                self.oCam.close()
+            except:
+                self.exception("Could not close the PiCamera")
 
     def module_run(self):
 
-        #photos can be stored in png
-        #remember to set video and photo quality
-        #we can put thumbnail to none to gain some place
-
-        # A Memory state could be a good idea is necessary
-
-        # Keep the module run structure, change dynamically the self.updateDelay
-
-        # 1 : Check and Set Camera setting
-        # 2 : if needed, apply new Settings
-        # 3 : Depending on camera settings :
-        #       - Capture
-        #       - Record Video
-        # 4 : Set sleep time to minimum beetween Next Photo, Next Video
-
         self.select_camera_setting()
-
-        self.apply_camera_setting()
 
         self.manage_capture()
 
@@ -75,10 +64,11 @@ class CameraModule(Module):
 
 
 
+    def manage_sleep(self):
 
 
     def select_camera_setting(self):
-        return CAMERA_MAX_SETTING # For now, next do stuff with altitude,
+        self.oCurrentSetting =  CAMERA_MAX_SETTING
 
     def apply_camera_setting(self):
         self.oCam.resolution = self.oCurrentSetting.lVideoResolution
@@ -86,19 +76,61 @@ class CameraModule(Module):
 
 
     def manage_capture(self):
-        pass
+        self.debug("Managing capture")
+        tElapsedTime = self.oCurrentSetting.tCaptureInterval - (datetime.now() - self.dtLastCapture)
+        self.debug("Elapsed time since last capture : "+str(tElapsedTime))
+        if tElapsedTime.days < 0 and self.oCurrentSetting.bRecordCapture:
+            self.capture()
+
+
+    def capture(self):
+        try:
+            sCaptureFilename = self.get_capture_filename()
+            self.dtLastCapture = datetime.now()
+            self.oCam.capture(sCaptureFilename)
+            self.info("Capture of : "+sCaptureFilename)
+        except:
+            self.exception("Capture Failed")
 
     def manage_record(self):
-
+        self.debug("Managing record")
         if self.bIsRecording :
-            if self.oCurrentSetting.bRecordVideo:
-
-            else:
-                self.oCam.stop_recording()
-                self.bIsRecording = False
+            tElapsedTime = self.oCurrentSetting.tVideoDuration - (datetime.now() - self.dtStartRecoding)
+            self.debug("Elapsed Time since beginning of video recording : "+str(tElapsedTime))
+            self.debug("Video record in current setting : "+str(self.oCurrentSetting.bRecordVideo))
+            if tElapsedTime.days < 0 or not self.oCurrentSetting.bRecordVideo:
+                self.stop_video_recording()
+            if self.oCurrentSetting.bRecordVideo and not self.bIsRecording:
+                self.start_video_recording()
         else:
             if self.oCurrentSetting.bRecordVideo:
+                self.start_video_recording()
 
+    def start_video_recording(self):
+        try:
+            sVideoFilename = self.get_video_filename()
+            self.bIsRecording = True
+            self.dtStartRecoding = datetime.now()
+            self.iVideoCount += 1
+            self.apply_camera_setting()
+            self.oCam.start_recording(sVideoFilename)
+            self.info("Video Record Started : " + sVideoFilename, True)
+        except:
+            self.exception("Failed to start video recording")
+
+    def stop_video_recording(self):
+        try:
+            self.oCam.stop_recording()
+            self.bIsRecording = False
+            self.info("Video Record Stopped", True)
+        except:
+            self.exception("Failed to stop video recording")
+
+    def get_video_filename(self):
+        return CAMERA_VIDEO_PATH + datetime.now().strftime("%H:%M:%S")+"-" + str(self.iVideoCount) + ".h264"
+
+    def get_capture_filename(self):
+        return CAMERA_CAPTURE_PATH + datetime.now().strftime("%H:%M:%S")+"-" + str(self.iCaptureCount) + ".jpeg"
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@ PERIODICAL CHECKS @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -168,7 +200,11 @@ class CameraModule(Module):
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CAMERA SETTINGS @@@@@@@@@@@@@@@@@@@@
 
-
+"""
+    For now record will only be in jpeg for captures and 
+    h264 for videos.
+    Next Update will feature format and **options choice
+"""
 
 class CameraSetting():
     def __init__(self,

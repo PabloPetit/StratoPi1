@@ -60,7 +60,7 @@ MODULE_DEFAULT_UPDATE_DELAY = 5
 GSM_UPDATE_DELAY = 2
 ADC_UPDATE_DELAY = 2
 GPS_UPDATE_DELAY = 2
-CAMERA_UPDATE_DELAY = 3
+CAMERA_UPDATE_DELAY = 0 # This NEEDS to be 0, sleep is then re-implemented in the camera_module
 HMI_UPDATE_DELAY = 0.1
 
 ACQUIRE_TIMEOUT = 35 # F
@@ -146,6 +146,7 @@ B_NULL = b'\x00'
 
 
 MAIN_DISK_PATH = "/dev/root"
+
 
 CAMERA_CAPTURE_FILE_NAME_FORMAT = '{timestamp:%H%M%S}-{counter:003d}.png'
 
