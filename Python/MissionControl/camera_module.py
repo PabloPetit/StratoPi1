@@ -53,6 +53,7 @@ class CameraModule(Module):
                 self.oCam.close()
             except:
                 self.exception("Could not close the PiCamera")
+        super(CameraModule, self).end_run()
 
     def module_run(self):
 
@@ -62,10 +63,20 @@ class CameraModule(Module):
 
         self.manage_record()
 
+        self.manage_sleep()
+
 
 
     def manage_sleep(self):
-
+        tVideoSleep = self.oCurrentSetting.tVideoDuration - (datetime.now() - self.dtStartRecoding)
+        tCaptureSleep = self.oCurrentSetting.tCaptureInterval - (datetime.now() - self.dtLastCapture)
+        tSleep = min(tVideoSleep, tCaptureSleep)
+        fSleep = tSleep.seconds + (tSleep.microseconds / 1000000)
+        fSleep = max(0, fSleep)
+        try:
+            self.oCam.wait_recording(fSleep)
+        except:
+            self.exception("Error while wait_recording")
 
     def select_camera_setting(self):
         self.oCurrentSetting =  CAMERA_MAX_SETTING
@@ -87,7 +98,7 @@ class CameraModule(Module):
         try:
             sCaptureFilename = self.get_capture_filename()
             self.dtLastCapture = datetime.now()
-            self.oCam.capture(sCaptureFilename)
+            self.oCam.capture(sCaptureFilename, resize = self.oCurrentSetting.lCaptureResolution)
             self.info("Capture of : "+sCaptureFilename)
         except:
             self.exception("Capture Failed")

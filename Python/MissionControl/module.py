@@ -121,6 +121,7 @@ class Module( Thread ):
             time.sleep( self.fUpdateDelay )
 
         self.info("Run Finished", True)
+        self.end_run()
 
     def evaluate_periodical_checks(self):
         self.debug("Evaluating Periodical Checks ...")
@@ -151,7 +152,8 @@ class Module( Thread ):
         self.info("Module Stopped", True)
 
     def end_run(self):
-        pass
+        self.oLog.shutdown()
+        self.oRawLog.shutdown()
 
     def stop_condition(self):
         return self.bStop

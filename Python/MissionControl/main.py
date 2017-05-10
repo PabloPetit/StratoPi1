@@ -20,6 +20,7 @@ dModules = {}
 dMainPeriodicalChecks = {}
 
 bConfirmSMSReceived = False
+bEndMission = False
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ FUNCTIONS @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -198,9 +199,29 @@ def flight_loop():
     global dModules, oMainLog
 
 
+def wait_for_end_mission():
+    pass
 
+def end_mission():
+    global dModules, oMainLog
+    oMainLog.info("End of mission")
+    oMainLog.info("Shutting down modules")
 
+    for mod in dModules:
+        oMainLog.info("Stopping "+mod.name)
+        mod.stop_module()
+        mod.join(JOIN_TIMEOUT)
+        oMainLog.info(mod.name+" stopped")
 
+    # TODO led signal, GPIO cleanup()
+
+    oMainLog.info("Mission Finished, ready for final shutdown")
+
+def shutdown():
+    oMainLog.info("Shutdown")
+    oMainLog.shutdown()
+    #subprocesses.call("sudo shutdown"# )
+    exit()
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #                                SCRIPT ZONE
@@ -231,12 +252,11 @@ confirmation_blink()
 
 flight_loop()
 
+wait_for_end_mission()
 
+end_mission()
 
-
-
-
-
+shutdown()
 
 
 

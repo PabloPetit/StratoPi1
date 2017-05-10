@@ -64,6 +64,7 @@ CAMERA_UPDATE_DELAY = 0 # This NEEDS to be 0, sleep is then re-implemented in th
 HMI_UPDATE_DELAY = 0.1
 
 ACQUIRE_TIMEOUT = 35 # F
+JOIN_TIMEOUT = 30
 
 #@@@@@@@@@@@ COMMAND STATE REFRESH @@@@@@@@@@@
 
