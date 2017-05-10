@@ -292,7 +292,7 @@ class GsmModule( UartModule ):
         self.info("Network Confirmation SMS received")
         global bConfirmSMSReceived
         bConfirmSMSReceived = True
-         
+
 
 
 # @@@@@@@@@@@@@@@@@@@@@@ COMMAND STATES @@@@@@@@@@@@@@@@@@@@@@@@

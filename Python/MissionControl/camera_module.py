@@ -11,16 +11,32 @@ class CameraModule(Module):
         self.fUpdateDelay = CAMERA_UPDATE_DELAY
         self.tMainLogInterval = DEFAULT_MAIN_LOG_INTERVAL
 
-        self.bRecording = False
+        self.bIsRecording = False
+        self.dtStartRecoding = datetime.min
+        self.dtLastCapture = datetime.min
 
         self.iCaptureCount = 0
         self.iVideoCount = 0
 
         self.oCurrentSetting = None
 
+        self.oCam = None
+        self.bCaptureOk = False
+
     def setup(self):
         super(CameraModule, self).setup()
-        #Try to capture an image
+        try:
+            self.oCam = PiCamera()
+        except:
+            self.exception("Failed to create Camera object")
+            self.oCam = None
+        if self.oCam != None:
+            try:
+                time.sleep(2)
+                self.oCam.capture(CAMERA_CAPTURE_PATH+"warm_up.png")
+                self.bCaptureOk = True
+            except:
+                self.exception("Failed to warm up camera")
 
     def create_periodical_checks(self):
         self.add_periodical_checks(MEMORY_STATE, MemoryState(self.read_free_memory, MEMORY_REFRESH_TIMEOUT, MEMORY_STATE))
@@ -29,7 +45,7 @@ class CameraModule(Module):
         pass
 
     def evaluate_module_ready(self):
-        return True
+        return self.oCam is not None and self.bCaptureOk
 
 
     def module_run(self):
@@ -49,15 +65,42 @@ class CameraModule(Module):
         #       - Record Video
         # 4 : Set sleep time to minimum beetween Next Photo, Next Video
 
-        pass
+        self.select_camera_setting()
+
+        self.apply_camera_setting()
+
+        self.manage_capture()
+
+        self.manage_record()
+
+
 
 
 
     def select_camera_setting(self):
-        pass
+        return CAMERA_MAX_SETTING # For now, next do stuff with altitude,
 
     def apply_camera_setting(self):
+        self.oCam.resolution = self.oCurrentSetting.lVideoResolution
+        self.oCam.framerate = self.oCurrentSetting.iFPS
+
+
+    def manage_capture(self):
         pass
+
+    def manage_record(self):
+
+        if self.bIsRecording :
+            if self.oCurrentSetting.bRecordVideo:
+
+            else:
+                self.oCam.stop_recording()
+                self.bIsRecording = False
+        else:
+            if self.oCurrentSetting.bRecordVideo:
+
+
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@ PERIODICAL CHECKS @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     def read_free_memory(self):
         try:
@@ -108,6 +151,9 @@ class CameraModule(Module):
 
         return fSize
 
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@ MODULE FUNCTIONS @@@@@@@@@@@@@@@@@@@@@
+
     def check_self_integrity(self):
         return True
 
@@ -120,9 +166,41 @@ class CameraModule(Module):
 
 
 
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CAMERA SETTINGS @@@@@@@@@@@@@@@@@@@@
 
 
 
+class CameraSetting():
+    def __init__(self,
+                 lCaptureResolution=(3280, 2464),
+                 lVideoResolution=(1920, 1080),
+                 iFPS=30,
+                 iCaptureQuality = 100,
+                 iVideoQuality=10,
+                 bRecordVideo=True,
+                 bRecordCapture=True,
+                 tCaptureInterval=timedelta(seconds=30),
+                 tVideoDuration=timedelta(minutes=15)
+                 ):
+        self.lCaptureResolution = lCaptureResolution
+        self.lVideoResolution = lVideoResolution
+        self.iFPS = iFPS
+        self.iCaptureQuality = iCaptureQuality
+        self.iVideoQuality = iVideoQuality  # Range [40, 10] 10 where Very High for h.264, [0, 100] for mjpeg
+        self.bRecordVideo = bRecordVideo
+        self.bRecordCapture = bRecordCapture
+
+        self.tCaptureInterval = tCaptureInterval
+        self.tVideoDuration = tVideoDuration
+
+# @@@@@@@@@@@@@@@@@@@ MAIN STARTUP @@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+WAIT_FOR_STARTUP_SLEEP = 5
+WAIT_FOR_CONFIRMATION_SMS_SLEEP = 5
+WAIT_FOR_MISSION_LAUNCH_SLEEP = 0.05
+
+CONFIRMATION_BLINK_INTERVAL = 0.5
+CONFIRMATION_BLINK_TIME = timedelta(seconds=10)
 
 
 

@@ -1,6 +1,7 @@
 import serial
 import logging
 from datetime import *
+from camera_module import CameraSetting
 
 #@@@@@@@@@@@@@@ PRINTER RELATED @@@@@@@@@@@@
 
@@ -33,8 +34,8 @@ INFO_LOG_PATH = "info.log"
 WARNING_LOG_PATH = "warning.log"
 RAW_LOG_PATH = "raw.log"
 
-CAMERA_CAPTURE_PATH = "Captures/"
-CAMERA_VIDEO_PATH = "Videos/"
+CAMERA_CAPTURE_PATH = CAMERA_LOG_PATH+"Captures/"
+CAMERA_VIDEO_PATH = CAMERA_LOG_PATH+"Videos/"
 
 #@@@@@@@@@@@@@@ SMS AND GSM RELATED @@@@@@@@@@@@@@
 
@@ -144,56 +145,68 @@ B_NULL = b'\x00'
 #@@@@@@@@@@@ CAMERA @@@@@@@@@@@@@@@@@@@@@@@@
 
 
+MAIN_DISK_PATH = "/dev/root"
 
 CAMERA_CAPTURE_FILE_NAME_FORMAT = '{timestamp:%H%M%S}-{counter:003d}.png'
 
 CAMERA_LOW_ALTITUDE_LIMIT = 15000
 
-CAMERA_LOW_ALTITUDE_SETTINGS = None
-CAMERA_HIGH_ALTITUDE_SETTINGS = None
 
-CAMERA_LOW_MEMORY_SETTINGS = None
-CAMERA_VERY_LOW_MEMORY_SETTINGS = None
+CAMERA_MAX_SETTING = CameraSetting(
+                lCaptureResolution=(3280, 2464),
+                lVideoResolution=(1920, 1080),
+                iFPS=30,
+                iCaptureQuality = 100,
+                iVideoQuality=10,
+                bRecordVideo=True,
+                bRecordCapture=True,
+                tCaptureInterval=timedelta(seconds=30),
+                tVideoDuration=timedelta(minutes=15)
+            )
 
-CAMERA_LOW_BATTERY_SETTING = None
+CAMERA_HIGH_SETTING = CameraSetting(
+                lCaptureResolution=(3280, 2464),
+                lVideoResolution=(1920, 1080),
+                iFPS=24,
+                iCaptureQuality = 100,
+                iVideoQuality=20,
+                bRecordVideo=True,
+                bRecordCapture=True,
+                tCaptureInterval=timedelta(seconds=30),
+                tVideoDuration=timedelta(minutes=15)
+            )
+
+CAMERA_MEDUIM_SETTING = CameraSetting(
+                lCaptureResolution=(3280, 2464),
+                lVideoResolution=(1280, 720),
+                iFPS=24,
+                iCaptureQuality = 100,
+                iVideoQuality=20,
+                bRecordVideo=True,
+                bRecordCapture=True,
+                tCaptureInterval=timedelta(seconds=45),
+                tVideoDuration=timedelta(minutes=10)
+            )
+
+CAMERA_LOW_SETTING = CameraSetting(
+                lCaptureResolution=(3280, 2464),
+                lVideoResolution=(1280, 720),
+                iFPS=24,
+                iCaptureQuality = 100,
+                iVideoQuality=20,
+                bRecordVideo=False,
+                bRecordCapture=True,
+                tCaptureInterval=timedelta(seconds=60),
+                tVideoDuration=timedelta(minutes=10)
+            )
 
 
-MAIN_DISK_PATH = "/dev/root"
 
 
-class CameraSetting():
-    def __init__(self,
-                 lCaptureResolution=(3280, 2464),
-                 lVideoResolution=(1920, 1080),
-                 iFPS=30,
-                 iCaptureQuality=100,
-                 iVideoQuality=10,
-                 bRecordVideo=True,
-                 bRecordCapture=True,
-                 tCaptureInterval=timedelta(seconds=30),
-                 tVideoDuration=timedelta(minutes=15)
-                 ):
-        self.lCaptureResolution = lCaptureResolution
-        self.lVideoResolution = lVideoResolution
-        self.iFPS = iFPS
-        self.iCaptureQuality = iCaptureQuality  # Range [0, 100]
-        self.iVideoQuality = iVideoQuality  # Range [40, 10] 10 where Very High for h.264, [0, 100] for mjpeg
-
-        self.bRecordVideo = bRecordVideo
-        self.bRecordCapture = bRecordCapture
-
-        self.tCaptureInterval = tCaptureInterval
-        self.tVideoDuration = tVideoDuration
 
 
-#  @@@@@@@@@@@@@@@@@@@ MAIN STARTUP @@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-WAIT_FOR_STARTUP_SLEEP = 5
-WAIT_FOR_CONFIRMATION_SMS_SLEEP = 5
-WAIT_FOR_MISSION_LAUNCH_SLEEP = 0.05
 
-CONFIRMATION_BLINK_INTERVAL = 0.5
-CONFIRMATION_BLINK_TIME = timedelta(seconds=10)
 
 
 
