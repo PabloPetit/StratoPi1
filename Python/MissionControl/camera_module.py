@@ -66,7 +66,6 @@ class CameraModule(Module):
         self.manage_sleep()
 
 
-
     def manage_sleep(self):
         tVideoSleep = self.oCurrentSetting.tVideoDuration - (datetime.now() - self.dtStartRecoding)
         tCaptureSleep = self.oCurrentSetting.tCaptureInterval - (datetime.now() - self.dtLastCapture)
@@ -240,14 +239,6 @@ class CameraSetting():
         self.tCaptureInterval = tCaptureInterval
         self.tVideoDuration = tVideoDuration
 
-# @@@@@@@@@@@@@@@@@@@ MAIN STARTUP @@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-WAIT_FOR_STARTUP_SLEEP = 5
-WAIT_FOR_CONFIRMATION_SMS_SLEEP = 5
-WAIT_FOR_MISSION_LAUNCH_SLEEP = 0.05
-
-CONFIRMATION_BLINK_INTERVAL = 0.5
-CONFIRMATION_BLINK_TIME = timedelta(seconds=10)
 
 
 

@@ -3,6 +3,21 @@ import logging
 from datetime import *
 from camera_module import CameraSetting
 
+
+#@@@@@@@@@@@@@@ MISSION CONTROL RELATED @@@@@@@@@@
+
+
+WAIT_FOR_STARTUP_SLEEP = 5
+WAIT_FOR_CONFIRMATION_SMS_SLEEP = 5
+WAIT_FOR_MISSION_LAUNCH_SLEEP = 0.05
+
+CONFIRMATION_BLINK_INTERVAL = 0.5
+CONFIRMATION_BLINK_TIME = timedelta(seconds=10)
+
+FLIGHT_LOOP_SLEEP = 5
+MINIMAL_LOCATION_SMS_SENT = 10
+
+
 #@@@@@@@@@@@@@@ PRINTER RELATED @@@@@@@@@@@@
 
 
@@ -147,7 +162,6 @@ B_NULL = b'\x00'
 
 
 MAIN_DISK_PATH = "/dev/root"
-
 
 CAMERA_CAPTURE_FILE_NAME_FORMAT = '{timestamp:%H%M%S}-{counter:003d}.png'
 

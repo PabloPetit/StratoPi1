@@ -196,7 +196,20 @@ def confirmation_blink():
 
 
 def flight_loop():
-    global dModules, oMainLog
+    global dModules, oMainLog, dMainPeriodicalChecks
+    oSignalState = dMainPeriodicalChecks[SIGNAL_STATE]
+
+    bHasTouchDown = False
+    bButtonReadLoopActivated = False
+    iLocationSMSsSent = 0
+
+
+    while not bEndMission and iLocationSMSsSent < MINIMAL_LOCATION_SMS_SENT:
+
+        if not GPIO.input(BUTTON):#Button pressed
+            pass
+
+        time.sleep(FLIGHT_LOOP_SLEEP)
 
 
 def wait_for_end_mission():

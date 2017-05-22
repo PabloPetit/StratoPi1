@@ -16,8 +16,6 @@ class GPSModule(UartModule):
 
         self.fMaxAltitude = 0.0
 
-        self.bOnDescent = False
-
         self.dTramePref = {
             GPRMC : self.read_GPRMC,
             GPVTG : self.read_GPVTG,
@@ -48,6 +46,7 @@ class GPSModule(UartModule):
 
     def module_run(self):
         self.read_gps_data()
+
 
     def read_gps_data(self):
         try:

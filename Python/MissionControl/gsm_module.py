@@ -16,9 +16,12 @@ class GsmModule( UartModule ):
         self.dSms_commands = {
             "STATE" : self.send_state,
             "CONFIRM" : self.confirm_network,
-            "REG" : self.register_numbers
-            #"END_MISSION" : self.end_mission
+            "REG" : self.register_numbers,
+            "LOCATION" : self.send_location,
+            "END_MISSION" : self.end_mission
         }
+
+        self.default_sms_command = self.send_default_sms
 
         self.oCurrentSmsMessage = None
 
@@ -189,7 +192,8 @@ class GsmModule( UartModule ):
                     self.dSms_commands[com](oSms)
                     self.debug("Prefix found")
                     return
-            self.warning("Prefix not found")
+            self.warning("Prefix not found, sending default sms")
+            self.default_sms_command(oSms)
         except Exception:
             self.exception("An error occured while switching on SMS prefix : \n")
 
@@ -268,13 +272,13 @@ class GsmModule( UartModule ):
             lNumberList = [ oSms.sSender.replace('"', "")]
             oSmsToSend = SmsToSend(sMessage, lNumberList)
             self.qSms_to_send.put(oSmsToSend)
-            self.info("Sending STATE response to : "+str(lNumberList)+" Content : \n"+oSmsToSend.log_str())
+            self.info("Sending STATE response to : "+str(lNumberList)+" Content : \n"+oSmsToSend.log_str(), True)
         except Exception:
             self.exception("An error occured while trying to send current state : \n")
 
     def register_numbers(self, oSms):
         try:
-            self.info("Registrering numbers")
+            self.info("Registrering numbers", True)
             global dTelephone_numbers
             lNumbers = oSms.sMessage.split()
             lNumbers = lNumbers[1:]
@@ -292,9 +296,29 @@ class GsmModule( UartModule ):
         return True
 
     def confirm_network(self, oSms):
-        self.info("Network Confirmation SMS received")
+        self.info("Network Confirmation SMS received", True)
         global bConfirmSMSReceived
         bConfirmSMSReceived = True
+
+    def send_location(self, oSms):
+        try:
+            self.info("Sending location")
+        except:
+            self.exception("Exception while reading LOCATION sms")
+
+    def send_default_sms(self, oSms):
+        try:
+            self.info("Sending default sms", True)
+            self.send_state(oSms)
+            self.send_location(oSms)
+        except:
+            self.exception("Exception while reading LOCATION sms")
+
+    def end_mission(self, oSms):
+        try:
+            self.info("End mission sms received")
+        except:
+            self.exception("Exception while ending mission")
 
 
 
