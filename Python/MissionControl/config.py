@@ -1,5 +1,4 @@
-import time # To avoid conflicts with datetime.time ...
-from datetime import *
+from datetime import datetime, timedelta
 import logging
 import logging.handlers
 import serial

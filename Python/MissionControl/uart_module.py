@@ -6,8 +6,6 @@ from module import *
 
 """
 
-
-
 class UartModule(Module):
 
     def __init__(self, oMainLog, sPort = DEFAULT_UART_PORT):
