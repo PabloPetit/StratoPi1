@@ -1,9 +1,4 @@
-from gsm_module import *
-from adc_module import *
-from gps_module import *
-import logging
-import sys
-import os
+from main import *
 
 if not os.path.isdir( MAIN_LOG_PATH  ):
     os.makedirs(MAIN_LOG_PATH )
@@ -48,3 +43,9 @@ adc = ADCModule(oLog)
 adc.setup()
 adc.start()
 """
+
+
+
+
+
+

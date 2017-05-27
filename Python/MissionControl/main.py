@@ -1,13 +1,32 @@
+from datetime import *
+import logging
+import logging.handlers
+
+import time
+import os
+import sys
+import serial
+
+import subprocess
+from threading import *
+from queue import *
+
+import collections
+
+from picamera import *
+import RPi.GPIO as GPIO
+
+from config import *
+from periodical_check import *
+from module import *
+from uart_module import *
+
 from gsm_module import *
 from adc_module import *
 from gps_module import *
 from camera_module import *
-from config import *
-from datetime import *
-import logging
-import os
-import RPi.GPIO as GPIO
-import time
+
+
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ GLOABAL VARIABLES @@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -246,7 +265,7 @@ def shutdown():
     CREATE AN ABORT SYSTEM WITH AN SMS ?
 """
 
-
+""""""
 create_main_log()
 
 setup_GPIO()
@@ -271,7 +290,7 @@ end_mission()
 
 shutdown()
 
-
+"""
 
 
 

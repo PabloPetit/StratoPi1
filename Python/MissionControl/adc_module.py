@@ -1,6 +1,3 @@
-from module import *
-import RPi.GPIO as GPIO
-
 class ADCModule(Module):
 
     def __init__(self, oMainLog):

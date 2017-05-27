@@ -1,6 +1,3 @@
-from uart_module import *
-import collections
-
 class GPSModule(UartModule):
 
     def __init__(self, oMainLog, sPort):

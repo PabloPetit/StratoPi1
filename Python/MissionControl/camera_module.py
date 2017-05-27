@@ -1,7 +1,3 @@
-from module import *
-from picamera import *
-import subprocess
-
 class CameraModule(Module):
     def __init__(self, oMainLog):
         Module.__init__(self, oMainLog)
@@ -242,12 +238,58 @@ class CameraSetting():
 
 
 
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@ PRESETS @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
 
 
+CAMERA_MAX_SETTING = CameraSetting(
+                lCaptureResolution=(3280, 2464),
+                lVideoResolution=(1920, 1080),
+                iFPS=30,
+                iCaptureQuality = 100,
+                iVideoQuality=10,
+                bRecordVideo=True,
+                bRecordCapture=True,
+                tCaptureInterval=timedelta(seconds=30),
+                tVideoDuration=timedelta(minutes=15)
+            )
 
+CAMERA_HIGH_SETTING = CameraSetting(
+                lCaptureResolution=(3280, 2464),
+                lVideoResolution=(1920, 1080),
+                iFPS=24,
+                iCaptureQuality = 100,
+                iVideoQuality=20,
+                bRecordVideo=True,
+                bRecordCapture=True,
+                tCaptureInterval=timedelta(seconds=30),
+                tVideoDuration=timedelta(minutes=15)
+            )
 
+CAMERA_MEDUIM_SETTING = CameraSetting(
+                lCaptureResolution=(3280, 2464),
+                lVideoResolution=(1280, 720),
+                iFPS=24,
+                iCaptureQuality = 100,
+                iVideoQuality=20,
+                bRecordVideo=True,
+                bRecordCapture=True,
+                tCaptureInterval=timedelta(seconds=45),
+                tVideoDuration=timedelta(minutes=10)
+            )
+
+CAMERA_LOW_SETTING = CameraSetting(
+                lCaptureResolution=(3280, 2464),
+                lVideoResolution=(1280, 720),
+                iFPS=24,
+                iCaptureQuality = 100,
+                iVideoQuality=20,
+                bRecordVideo=False,
+                bRecordCapture=True,
+                tCaptureInterval=timedelta(seconds=60),
+                tVideoDuration=timedelta(minutes=10)
+            )
 
 
 

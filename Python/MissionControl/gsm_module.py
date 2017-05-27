@@ -1,6 +1,3 @@
-from uart_module import *
-import RPi.GPIO as GPIO
-
 class GsmModule( UartModule ):
 
     def __init__(self, oMainLog, sPort):

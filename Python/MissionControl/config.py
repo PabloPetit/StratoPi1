@@ -1,9 +1,3 @@
-import serial
-import logging
-from datetime import *
-from camera_module import CameraSetting
-
-
 #@@@@@@@@@@@@@@ MISSION CONTROL RELATED @@@@@@@@@@
 
 
@@ -166,56 +160,6 @@ MAIN_DISK_PATH = "/dev/root"
 CAMERA_CAPTURE_FILE_NAME_FORMAT = '{timestamp:%H%M%S}-{counter:003d}.png'
 
 CAMERA_LOW_ALTITUDE_LIMIT = 15000
-
-
-CAMERA_MAX_SETTING = CameraSetting(
-                lCaptureResolution=(3280, 2464),
-                lVideoResolution=(1920, 1080),
-                iFPS=30,
-                iCaptureQuality = 100,
-                iVideoQuality=10,
-                bRecordVideo=True,
-                bRecordCapture=True,
-                tCaptureInterval=timedelta(seconds=30),
-                tVideoDuration=timedelta(minutes=15)
-            )
-
-CAMERA_HIGH_SETTING = CameraSetting(
-                lCaptureResolution=(3280, 2464),
-                lVideoResolution=(1920, 1080),
-                iFPS=24,
-                iCaptureQuality = 100,
-                iVideoQuality=20,
-                bRecordVideo=True,
-                bRecordCapture=True,
-                tCaptureInterval=timedelta(seconds=30),
-                tVideoDuration=timedelta(minutes=15)
-            )
-
-CAMERA_MEDUIM_SETTING = CameraSetting(
-                lCaptureResolution=(3280, 2464),
-                lVideoResolution=(1280, 720),
-                iFPS=24,
-                iCaptureQuality = 100,
-                iVideoQuality=20,
-                bRecordVideo=True,
-                bRecordCapture=True,
-                tCaptureInterval=timedelta(seconds=45),
-                tVideoDuration=timedelta(minutes=10)
-            )
-
-CAMERA_LOW_SETTING = CameraSetting(
-                lCaptureResolution=(3280, 2464),
-                lVideoResolution=(1280, 720),
-                iFPS=24,
-                iCaptureQuality = 100,
-                iVideoQuality=20,
-                bRecordVideo=False,
-                bRecordCapture=True,
-                tCaptureInterval=timedelta(seconds=60),
-                tVideoDuration=timedelta(minutes=10)
-            )
-
 
 
 
