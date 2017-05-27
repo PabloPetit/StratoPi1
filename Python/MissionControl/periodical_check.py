@@ -40,7 +40,6 @@ class PeriodicalCheck():
         self.bIsOn = True
         self.dStates = {}
         self.create_dict_state()
-        self.oLock = Lock()
 
     def create_dict_state(self):
         raise NotImplementedError("Create dict states not implemented")

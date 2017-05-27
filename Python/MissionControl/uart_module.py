@@ -34,7 +34,7 @@ class UartModule(Module):
     def create_debuffer_dict(self):
         raise NotImplementedError("create_debuffer_dict not implemented")
 
-    def create_peridical_checks(self):
+    def create_periodical_checks(self):
         raise NotImplementedError("create_command_states not implemented")
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@ UART @@@@@@@@@@@@@@@@@@@@@@@@

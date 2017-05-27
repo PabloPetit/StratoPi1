@@ -34,12 +34,12 @@ oLog.addHandler(oDebugHandler)
 oLog.addHandler(oInfoHandler)
 oLog.addHandler(oWarningHandler)
 
-
+"""
 gsm = GsmModule(oLog, GSM_UART_PORT)
 gsm.setup()
 gsm.start()
-
 """
+
 gps = GPSModule(oLog, GPS_UART_PORT)
 gps.setup()
 gps.start()
@@ -47,3 +47,4 @@ gps.start()
 adc = ADCModule(oLog)
 adc.setup()
 adc.start()
+"""

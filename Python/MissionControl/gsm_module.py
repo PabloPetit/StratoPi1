@@ -37,7 +37,7 @@ class GsmModule( UartModule ):
         self.set_CMGF_state()
         self.close_net_light()
 
-    def create_peridical_checks(self):
+    def create_periodical_checks(self):
         self.add_periodical_checks(AT_STATE, ATState(self.at_check, AT_REFRESH_TIMEOUT, AT_STATE))
         self.add_periodical_checks(BATTERY_STATE, BatteryState(self.check_battery, BATTERY_REFRESH_TIMEOUT, BATTERY_STATE))
         self.add_periodical_checks(TEMPERATURE_STATE, TemperatureState(self.check_temperature, TEMPERATURE_REFRESH_TIMEOUT, TEMPERATURE_STATE))
@@ -52,19 +52,11 @@ class GsmModule( UartModule ):
         oBat = self.dPeriodicalChecks[BATTERY_STATE]
         oTemp = self.dPeriodicalChecks[TEMPERATURE_STATE]
         oSign = self.dPeriodicalChecks[SIGNAL_STATE]
-
-        oBat.oLock.acquire(ACQUIRE_TIMEOUT)
-        oTemp.oLock.acquire(ACQUIRE_TIMEOUT)
-        oSign.oLock.acquire(ACQUIRE_TIMEOUT)
         try:
             sRawLog = str(oBat.iPercent)+","+str(oBat.iVoltage)+","+str(oTemp.fDegres)+","+str(oSign.iStrenght)
-            self.oRawLog(sRawLog)
+            self.oRawLog().info(sRawLog)
         except:
             self.warning("Error when sending raw log")
-        finally:
-            oBat.oLock.release()
-            oTemp.oLock.release()
-            oSign.oLock.release()
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ MODULE FUNCTIONS @@@@@@@@@@@@@@@@@@@
 

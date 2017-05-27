@@ -77,6 +77,7 @@ class Module( Thread ):
         self.oLog = logging.getLogger(self.name)
         self.oLog.setLevel(logging.DEBUG) # Acceptes everthings, filter done with handlers
         self.oRawLog = logging.getLogger(self.name+RAW_NAME)
+        self.oRawLog = logging.getLogger(self.name + RAW_NAME)
 
         self.oLog.addHandler(self.oDebugHandler)
         self.oLog.addHandler(self.oInfoHandler)
@@ -126,7 +127,6 @@ class Module( Thread ):
     def evaluate_periodical_checks(self):
         self.debug("Evaluating Periodical Checks ...")
         for oCom in self.dPeriodicalChecks.values():
-            oCom.oLock.acquire(timeout=ACQUIRE_TIMEOUT)
             try:
                 if oCom.bIsOn:
                     tdTimeDelta = datetime.now() - oCom.dtLastCheck
@@ -138,8 +138,6 @@ class Module( Thread ):
                         oCom.dtLastCheck = datetime.now()
             except:
                 self.exception("Exception while evaluating "+oCom.sName)
-            finally:
-                oCom.oLock.release()
         self.debug("Evaluating Periodical Checks Done")
 
 
@@ -176,13 +174,10 @@ class Module( Thread ):
     def send_log(self, bForwardMain):
         sLog = "  --[ "+self.name+" CURRENT STATE ]---\n"
         for oCom in self.dPeriodicalChecks.values():
-            oCom.oLock.acquire(timeout=ACQUIRE_TIMEOUT)
             try:
                 sLog+="        "+oCom.log_str()+"\n"
             except:
                 self.exception("Exception while sending log")
-            finally:
-                oCom.oLock.release()
         self.info(sLog,bForwardMain)
 
     def debug(self, sMessage, bForwardMain = False):

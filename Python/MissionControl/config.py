@@ -108,7 +108,7 @@ GREEN_LED = 16
 BLUE_LED = 13
 BUTTON = 18
 
-GSM_RESET_PIN = 42
+GSM_RESET_PIN = 40
 
 # MCP3008
 
@@ -217,6 +217,35 @@ CAMERA_LOW_SETTING = CameraSetting(
             )
 
 
+
+
+
+#@@@@@@@@@@@@@@@@@@@@@@@ PLUG INFO @@@@@@@@@@@@@@@@@@@
+"""
+
+USB UART FTDI HEADER :
+
+1 RTS Ready to Send
+2 RXD Receive
+3 TXD Transmit
+4 CTS Clear to Send
+5 GND Ground
+6 SYS3V3 Power Supply (3.3V) 
+
+
+MCP3008 connexions : 
+
+MCP3008 VDD to Raspberry Pi 3.3V
+MCP3008 VREF to Raspberry Pi 3.3V
+MCP3008 AGND to Raspberry Pi GND
+MCP3008 DGND to Raspberry Pi GND
+MCP3008 CLK to Raspberry Pi SCLK = PIN 23 [ BLUE ]
+MCP3008 DOUT to Raspberry Pi MISO = PIN 21 [ GREEN ]
+MCP3008 DIN to Raspberry Pi MOSI = PIN 19 [ YELLOW ]
+MCP3008 CS/SHDN to Raspberry Pi CE0 = PIN 24 [ ORANGE ]
+
+
+"""
 
 
 

@@ -26,7 +26,7 @@ class ADCModule(Module):
         oADC.oLock().acquire(timeout=ACQUIRE_TIMEOUT)
         try:
             sRawLog = str(oADC.lTempBattery[2])+","+str(oADC.lTempOutside[2])+","+str(oADC.lUV[0])
-            self.oRawLog(sRawLog)
+            self.oRawLog().info(sRawLog)
         except:
             self.warning("Error when sending raw log")
         finally:
