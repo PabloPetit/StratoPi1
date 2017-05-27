@@ -3,6 +3,21 @@ import logging
 import logging.handlers
 import serial
 
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ GLOBAL VARIABLES @@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+oDebugHandler = None
+oInfoHandler = None
+oWarningHandler = None
+oMainLog = None
+
+dModules = {}
+dMainPeriodicalChecks = {}
+
+bConfirmSMSReceived = False
+bEndMission = False
+
+
+
 #@@@@@@@@@@@@@@ MISSION CONTROL RELATED @@@@@@@@@@
 
 

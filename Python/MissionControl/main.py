@@ -7,18 +7,6 @@ from camera_module import *
 
 
 
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ GLOABAL VARIABLES @@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-oDebugHandler = None
-oInfoHandler = None
-oWarningHandler = None
-oMainLog = None
-
-dModules = {}
-dMainPeriodicalChecks = {}
-
-bConfirmSMSReceived = False
-bEndMission = False
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ FUNCTIONS @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

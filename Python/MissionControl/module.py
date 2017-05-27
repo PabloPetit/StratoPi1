@@ -4,7 +4,6 @@ import time
 
 from config import *
 from periodical_check import *
-from main import *
 
 class Module( Thread ):
 
