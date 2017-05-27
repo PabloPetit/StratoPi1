@@ -1,3 +1,5 @@
+from module import *
+
 """
     NOTE : An OSError is raised when the module is unplugged 
     Is it usefull to handle it ?

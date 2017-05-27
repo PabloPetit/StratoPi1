@@ -1,3 +1,8 @@
+from module import *
+from picamera import *
+import subprocess
+
+
 class CameraModule(Module):
     def __init__(self, oMainLog):
         Module.__init__(self, oMainLog)
