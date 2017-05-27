@@ -265,7 +265,7 @@ def shutdown():
     CREATE AN ABORT SYSTEM WITH AN SMS ?
 """
 
-""""""
+"""
 create_main_log()
 
 setup_GPIO()
