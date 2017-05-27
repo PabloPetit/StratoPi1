@@ -74,10 +74,10 @@ class GPSModule(UartModule):
             for sTempBuffer in self.sLastBuffer:
                 for trame in sTempBuffer.split("\r\n"):
                     try:
-                        sPrefixe = trame.split("\r\n")[0].replace('$','')
+                        sPrefixe = trame.split(",")[0].replace('$','')
                         self.dTramePref[sPrefixe](trame)
                     except Exception:
-                        self.warning("Wrong Prefixe on GPS trame parsing")
+                        self.warning("Wrong Prefixe on GPS trame parsing : "+sPrefixe)
         except Exception:
             self.exception("Exception while reading GPS data")
 
