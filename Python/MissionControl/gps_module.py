@@ -78,7 +78,7 @@ class GPSModule(UartModule):
                 except Exception:
                     self.warning("Wrong Prefixe on GPS trame parsing")
         except Exception:
-            self.error("Exception while reading GPS data")
+            self.exception("Exception while reading GPS data")
 
 
     def read_GPGGA(self, sTrame):

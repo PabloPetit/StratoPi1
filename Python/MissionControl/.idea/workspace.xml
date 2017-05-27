@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fa9ec6fc-c61d-4ce0-b617-b967cd5c8f1e" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.py" afterPath="$PROJECT_DIR$/config.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/periodical_check.py" afterPath="$PROJECT_DIR$/periodical_check.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/uart_module.py" afterPath="$PROJECT_DIR$/uart_module.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gps_module.py" afterPath="$PROJECT_DIR$/gps_module.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -21,7 +19,7 @@
     <splitter split-orientation="horizontal" split-proportion="0.49334377">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="uart_module.py" pinned="false" current-in-tab="true">
+          <file leaf-file-name="uart_module.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/uart_module.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="180">
@@ -67,11 +65,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="gps_module.py" pinned="false" current-in-tab="false">
+          <file leaf-file-name="gps_module.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/gps_module.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="150">
-                  <caret line="10" column="44" lean-forward="true" selection-start-line="10" selection-start-column="44" selection-end-line="10" selection-end-column="44" />
+                <state relative-caret-position="268">
+                  <caret line="64" column="27" lean-forward="true" selection-start-line="64" selection-start-column="27" selection-end-line="64" selection-end-column="27" />
                   <folding>
                     <element signature="e#0#25#0" expanded="true" />
                   </folding>
@@ -172,7 +170,6 @@
         <option value="$PROJECT_DIR$/command_state.py" />
         <option value="$PROJECT_DIR$/HMI_module.py" />
         <option value="$PROJECT_DIR$/testZone.py" />
-        <option value="$PROJECT_DIR$/gps_module.py" />
         <option value="$PROJECT_DIR$/adc_module.py" />
         <option value="$PROJECT_DIR$/gsm_module.py" />
         <option value="$PROJECT_DIR$/camera_module.py" />
@@ -181,6 +178,7 @@
         <option value="$PROJECT_DIR$/periodical_check.py" />
         <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/uart_module.py" />
+        <option value="$PROJECT_DIR$/gps_module.py" />
       </list>
     </option>
   </component>
@@ -815,16 +813,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gps_module.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="44" lean-forward="true" selection-start-line="10" selection-start-column="44" selection-end-line="10" selection-end-column="44" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -860,6 +848,16 @@
         <state relative-caret-position="180">
           <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gps_module.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="268">
+          <caret line="64" column="27" lean-forward="true" selection-start-line="64" selection-start-column="27" selection-end-line="64" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
