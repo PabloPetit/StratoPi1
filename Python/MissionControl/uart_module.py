@@ -25,7 +25,6 @@ class UartModule(Module):
 
     def setup(self):
         super(UartModule, self).setup()
-        self.create_peridical_checks()
         self.create_debuffer_dict()
         self.open_serial()
 
