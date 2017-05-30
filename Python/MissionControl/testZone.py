@@ -43,11 +43,11 @@ gsm.start()
 gps = GPSModule(oLog, GPS_UART_PORT)
 gps.setup()
 gps.start()
-
+"""
 Camera = CameraModule(oMainLog)
 Camera.setup()
 Camera.start()
-
+"""
 """
 adc = ADCModule(oLog)
 adc.setup()
