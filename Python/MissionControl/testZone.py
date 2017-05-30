@@ -45,6 +45,7 @@ GPIO.setup(GREEN_LED, GPIO.OUT)
 GPIO.output(BLUE_LED, GPIO.HIGH)
 GPIO.output(GREEN_LED, GPIO.LOW)
 
+print("Blue On")
 """
 gsm = GsmModule(oLog, GSM_UART_PORT)
 gsm.setup()
@@ -52,15 +53,15 @@ gsm.start()
 """
 
 while GPIO.input(BUTTON):
+
     time.sleep(WAIT_FOR_MISSION_LAUNCH_SLEEP)
-
-
-
+print("GPS STARTING")
 gps = GPSModule(oLog, GPS_UART_PORT)
 gps.setup()
 gps.start()
 
 GPIO.output(GREEN_LED, GPIO.HIGH)
+print("Green on")
 """
 Camera = CameraModule(oMainLog)
 Camera.setup()
