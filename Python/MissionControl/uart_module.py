@@ -1,5 +1,6 @@
 from module import *
 
+
 """
     NOTE : An OSError is raised when the module is unplugged 
     Is it usefull to handle it ?
@@ -58,8 +59,12 @@ class UartModule(Module):
     def module_run(self):
         raise NotImplementedError("module_run not implemented")
 
-
-
+    def end_run(self):
+        if self.oSer is not None:
+            try:
+                self.oSer.close()
+            except:
+                self.exception("Could not close serial")
 # @@@@@@@@@@@@@@@@@@@@@@@ COMMANDS MANAGEMENT @@@@@@@@@@@@@@@@@@@@@@@@@
 
     def write_command(self, command):
@@ -70,24 +75,32 @@ class UartModule(Module):
         except OSError:
             self.exception(" --- UART NOT FOUND ---")
 
-    def read_buffer(self):
-        buffer = ""
+    def read_buffer(self, bGetRaw = False):
         try:
             buffer = self.oSer.read_all()
+
+            if len(buffer) > 0 and buffer[0] >= 128:
+                self.error("None ascii data received, buffer flushed and re-read")
+                self.oSer.flush()
+                buffer = self.oSer.read_all()
+
+            if bGetRaw:
+                return buffer
             buffer = buffer.decode("ascii")
             buffer = buffer.replace("\r\n\r\n", '|')
             buffer = buffer.replace("\r\r\n", '|')  # TODO :NO NO NO NO NO ! Find something better !
-            return buffer.split('|')  # Black Magic, trust me
+            buffer = buffer.split('|')
+            return buffer
 
         except serial.SerialTimeoutException:
             self.exception("Serial read Error : ")
-            return ""
+            return "" if not bGetRaw else b""
         except AttributeError: #Can be the case where open_serial hasn't been called
             self.exception("Serial read Error : ")
-            return ""
+            return "" if not bGetRaw else b""
         except Exception:
             self.exception("Serial read Error : ")
-            return ""
+            return "" if not bGetRaw else b""
 
 
     def clear_buffer(self):

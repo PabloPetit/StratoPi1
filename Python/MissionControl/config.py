@@ -37,10 +37,12 @@ MINIMAL_LOCATION_SMS_SENT = 10
 
 LOG_FILE_ROTATION_MINUTES = 15#30
 DEFAULT_MAIN_LOG_INTERVAL = timedelta(minutes = 3)
-HOME_PATH = "/home/pi/Documents/MissionData/"
+#HOME_PATH = "/home/pi/Documents/MissionData/"
+HOME_PATH = "/Users/Pablo/Documents/MissionData/"
 
 LOG_FORMATTER = logging.Formatter("[ %(name)s - %(levelname)s ] %(asctime)s - %(message)s")
-RAW_LOG_FORMATTER = logging.Formatter("%(asctime)s --- %(message)s")
+RAW_LOG_FORMATTER = logging.Formatter("[ RAW ] %(asctime)s --- \n%(message)s")
+ONLY_MESSAGE_LOG_FORMATTER = logging.Formatter("%(message)s")
 
 DEFAULT_NAME = "ModuleName"
 RAW_NAME = "_RAW"
@@ -49,13 +51,11 @@ GSM_NAME = "GSM"
 ADC_NAME = "ADC"
 CAMERA_NAME = "Camera"
 GPS_NAME = "GPS"
-HMI_NAME = "HMI"
 
 GSM_LOG_PATH = HOME_PATH + GSM_NAME + '/'
 ADC_LOG_PATH = HOME_PATH + ADC_NAME + '/'
 CAMERA_LOG_PATH = HOME_PATH + CAMERA_NAME + '/'
 GPS_LOG_PATH = HOME_PATH + GPS_NAME + '/'
-HMI_LOG_PATH = HOME_PATH + HMI_NAME + '/'
 MAIN_LOG_PATH = HOME_PATH + MAIN_LOG_NAME + '/'
 
 DEBUG_LOG_PATH = "debug.log"
@@ -88,9 +88,8 @@ MODULE_DEFAULT_UPDATE_DELAY = 5
 
 GSM_UPDATE_DELAY = 2
 ADC_UPDATE_DELAY = 2
-GPS_UPDATE_DELAY = 2
+GPS_UPDATE_DELAY = 0.8
 CAMERA_UPDATE_DELAY = 0 # This NEEDS to be 0, sleep is then re-implemented in the camera_module
-HMI_UPDATE_DELAY = 0.1
 
 ACQUIRE_TIMEOUT = 35 # F
 JOIN_TIMEOUT = 30
@@ -148,6 +147,9 @@ MEMORY_STATE = "memory"
 
 GPS_MEMORY = 40
 
+GPS_BUFFER_READ_INTERVAL = 0.025
+GPS_MAX_WAIT_TIME = 2
+
 GPRMC = "GPRMC"
 GPVTG = "GPVTG"
 GPGGA = "GPGGA"
@@ -159,18 +161,20 @@ GPGSV = "GPGSV"
 
 GSM_UART_PORT = '/dev/ttyUSB0'
 GPS_UART_PORT = '/dev/serial0'
+#GPS_UART_PORT = '/dev/tty.usbserial-A503S1B9'
 
 DEFAULT_UART_PORT = '/dev/serial0'
 DEFAULT_UART_COMMAND_TIMEOUT = 1
 
 DEFAULT_BAUDS = 115200
+GPS_BAUDS = 9600
 DEFAULT_BYTE_SIZE = serial.EIGHTBITS
 DEFAULT_PARITY = serial.PARITY_NONE
 DEFAULT_STOP_BITS = serial.STOPBITS_ONE
 
 CTRL_Z = '\x1a'
 B_NULL = b'\x00'
-
+B_XFF = b'\xff'
 
 #@@@@@@@@@@@ CAMERA @@@@@@@@@@@@@@@@@@@@@@@@
 

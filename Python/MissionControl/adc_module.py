@@ -24,14 +24,11 @@ class ADCModule(Module):
 
     def send_raw_log(self): # Degres Bat, Degres Out, UV
         oADC = self.dPeriodicalChecks[ADC_STATE]
-        oADC.oLock().acquire(timeout=ACQUIRE_TIMEOUT)
         try:
             sRawLog = str(oADC.lTempBattery[2])+","+str(oADC.lTempOutside[2])+","+str(oADC.lUV[0])
             self.oRawLog().info(sRawLog)
         except:
             self.warning("Error when sending raw log")
-        finally:
-            oADC.oLock().release()
 
     def check_adc(self):
 

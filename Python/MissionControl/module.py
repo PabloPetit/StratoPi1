@@ -25,7 +25,7 @@ class Module( Thread ):
         # ATTRIBUTS TO REDEFINE
 
         self.name = DEFAULT_NAME
-        self.sLogPath = HOME_PATH + __name__
+        self.sLogPath = HOME_PATH + __name__ + "/"
         self.fUpdateDelay = MODULE_DEFAULT_UPDATE_DELAY
         self.tMainLogInterval = DEFAULT_MAIN_LOG_INTERVAL
          #Don't forget to call setup_logger in derived classes
@@ -71,7 +71,7 @@ class Module( Thread ):
         self.oLog = logging.getLogger(self.name)
         self.oLog.setLevel(logging.DEBUG) # Acceptes everthings, filter done with handlers
         self.oRawLog = logging.getLogger(self.name+RAW_NAME)
-        self.oRawLog = logging.getLogger(self.name + RAW_NAME)
+        self.oRawLog.setLevel(logging.DEBUG)
 
         self.oLog.addHandler(self.oDebugHandler)
         self.oLog.addHandler(self.oInfoHandler)
@@ -83,15 +83,16 @@ class Module( Thread ):
 
     def run(self):
         self.info("Run Started", True)
+        self.at_start()
         while not self.stop_condition():
-            self.debug("Begin Loop")
+            self.debug("-------------------  Begin Loop  -------------------")
             self.evaluate_periodical_checks()
 
             if not self.bIsReady: # Only at startup
                 self.info("Evaluating if ready :")
                 self.evaluate_module_ready()
                 if self.bIsReady:
-                    self.info("Ready")
+                    self.info("Ready", True)
                 else:
                     self.info("Not ready")
 
@@ -103,14 +104,15 @@ class Module( Thread ):
                 self.debug("Begin Module Run")
                 self.module_run()
                 self.debug("End Module Run")
-                if datetime.now() - self.dtLastMainLogDate > self.tMainLogInterval:
-                    self.debug("Log sent to Main")
-                    self.send_log(True)
-                    self.dtLastMainLogDate = datetime.now()
-                else:
-                    self.debug("Log sent not to Main")
-                    self.send_log(False)
-                self.send_raw_log()
+
+            if datetime.now() - self.dtLastMainLogDate > self.tMainLogInterval:
+                self.debug("Log sent to Main")
+                self.send_log(True)
+                self.dtLastMainLogDate = datetime.now()
+            else:
+                self.debug("Log not sent to Main")
+                self.send_log(False)
+            self.send_raw_log()
 
             self.debug("Sleeping for : "+str(self.fUpdateDelay)+" seconds")
             time.sleep( self.fUpdateDelay )
@@ -119,6 +121,8 @@ class Module( Thread ):
         self.end_run()
 
     def evaluate_periodical_checks(self):
+        if len(self.dPeriodicalChecks.values()) == 0:
+            return
         self.debug("Evaluating Periodical Checks ...")
         for oCom in self.dPeriodicalChecks.values():
             try:
@@ -137,6 +141,9 @@ class Module( Thread ):
 
     def evaluate_module_ready(self):
         raise NotImplementedError("evaluate_module_ready not implemented")
+
+    def at_start(self):
+        pass
 
 
     def stop_module(self):
@@ -166,13 +173,16 @@ class Module( Thread ):
         raise NotImplementedError("Send raw should be redifined")
 
     def send_log(self, bForwardMain):
-        sLog = "  --[ "+self.name+" CURRENT STATE ]---\n"
+        sLog = self.get_log_announcement_str()
         for oCom in self.dPeriodicalChecks.values():
             try:
                 sLog+="        "+oCom.log_str()+"\n"
             except:
                 self.exception("Exception while sending log")
         self.info(sLog,bForwardMain)
+
+    def get_log_announcement_str(self):
+        return "  --[ "+self.name+" CURRENT STATE ]---\n"
 
     def debug(self, sMessage, bForwardMain = False):
         self.oLog.debug(sMessage)

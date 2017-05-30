@@ -1,4 +1,9 @@
-from main import *
+print("Starting tests")
+
+from config import *
+
+from gps_module import *
+from camera_module import *
 
 if not os.path.isdir( MAIN_LOG_PATH  ):
     os.makedirs(MAIN_LOG_PATH )
@@ -38,6 +43,11 @@ gsm.start()
 gps = GPSModule(oLog, GPS_UART_PORT)
 gps.setup()
 gps.start()
+
+Camera = CameraModule(oMainLog)
+Camera.setup()
+Camera.start()
+
 """
 adc = ADCModule(oLog)
 adc.setup()

@@ -6,6 +6,8 @@ class GPSModule(UartModule):
     def __init__(self, oMainLog, sPort):
         UartModule.__init__(self, oMainLog, sPort)
 
+        self.iBauds = GPS_BAUDS
+
         self.name = GPS_NAME
         self.sLogPath = GPS_LOG_PATH
         self.fUpdateDelay = GPS_UPDATE_DELAY
@@ -25,11 +27,13 @@ class GPSModule(UartModule):
 
         self.oLastFix = None
         self.oCurrentFix = None
+
         self.sLastBuffer = ""
 
 
     def setup(self):
         super(GPSModule, self).setup()
+        self.oRawHandler.setFormatter(ONLY_MESSAGE_LOG_FORMATTER)
 
     def create_periodical_checks(self):
         pass
@@ -48,36 +52,75 @@ class GPSModule(UartModule):
 
     def send_log(self, bForwardMain):
         if self.oCurrentFix and self.oCurrentFix.bValid and self.oCurrentFix.iPositionFixIndicator > 0:
-            self.info(self.oCurrentFix.log_str())
+            self.info(self.get_log_announcement_str()+self.oCurrentFix.log_str())
 
     def evaluate_module_ready(self):
-        return self.oLastFix is not None # If first correct fix is acquired
+        self.bIsReady = self.oLastFix is not None # If first correct fix is acquired
+
+    def at_start(self):
+        try:
+            self.oSer.flush()
+        except:
+            self.exception("Could not flush GPS serial data at start")
 
     def module_run(self):
         try:
-            self.sLastBuffer = self.read_buffer()
-            self.oCurrentFix = GPSFix()
-            self.read_gps_data()
-            self.validate_fix()
+            self.set_buffer()
+            if len(self.sLastBuffer) > 0:
+                self.oCurrentFix = GPSFix()
+                self.read_gps_data()
+                self.validate_fix()
         except:
             self.exception("Could not read buffer from GPS UART device")
 
+
+    def set_buffer(self):
+
+        self.sLastBuffer = ""
+        self.debug("Waiting for data ...")
+        fTotalTime = 0
+        while len(self.sLastBuffer) == 0 :
+            time.sleep(GPS_BUFFER_READ_INTERVAL)
+            fTotalTime += GPS_BUFFER_READ_INTERVAL
+            self.sLastBuffer = self.read_buffer(True).decode("ascii")
+            if fTotalTime >= GPS_MAX_WAIT_TIME:
+                self.error("No data received")
+                break
+
+        while True:
+            time.sleep(GPS_BUFFER_READ_INTERVAL)
+            sTemp = self.read_buffer(True).decode("ascii")
+            self.sLastBuffer += sTemp
+            if len(sTemp) == 0:
+                break
+
+        self.debug("Buffer data received : "+str(len(self.sLastBuffer)))
+
+
     def validate_fix(self):
 
-        if self.oCurrentFix and self.oCurrentFix.bValid and self.oCurrentFix.iPositionFixIndicator > 0:
+        if self.oCurrentFix is not None and self.oCurrentFix.bValid and self.oCurrentFix.iPositionFixIndicator > 0:
             self.oLastFix = self.oCurrentFix
             self.dqFixMemory.appendleft(self.oCurrentFix)
+            self.info("Fix validated : \n"+self.oLastFix.log_str())
+        else:
+            if self.oCurrentFix is None:
+                self.info("Fix not validate : Current fix is None")
+            else:
+                self.info("Fix not validated : is Valid : "+str(self.oCurrentFix.bValid)+", Indicator : "+str(self.oCurrentFix.iPositionFixIndicator))
 
 
     def read_gps_data(self):
         try:
-            for sTempBuffer in self.sLastBuffer:
-                for trame in sTempBuffer.split("\r\n"):
-                    try:
-                        sPrefixe = trame.split(",")[0].replace('$','')
+            self.info("Reading GPS data : ")
+            self.debug("\n"+self.sLastBuffer)
+            for trame in self.sLastBuffer.split("\r\n"):
+                try:
+                    sPrefixe = trame.split(",")[0].replace('$','')
+                    if len(sPrefixe) > 0:
                         self.dTramePref[sPrefixe](trame)
-                    except Exception:
-                        self.warning("Wrong Prefixe on GPS trame parsing : "+sPrefixe)
+                except Exception:
+                    self.warning("Wrong Prefixe on GPS trame parsing : "+sPrefixe)
         except Exception:
             self.exception("Exception while reading GPS data")
 
@@ -93,12 +136,15 @@ class GPSModule(UartModule):
             self.oCurrentFix.sEWIndicator = lValues[5]
             try:
                 self.oCurrentFix.iPositionFixIndicator = int(lValues[6])
-                self.oCurrentFix.iSatUsed = int(lValues[7])
-                self.oCurrentFix.fHDOP = float(lValues[8])
                 self.oCurrentFix.fAltitudeMSL = float(lValues[9])
                 self.oCurrentFix.fGeoid = float(lValues[11])
             except:
-                self.warning("Could not read GGA number info ( Fix indicator, nbSatUsed, HDOP, MSL, Geoid )")
+                self.oCurrentFix.bValid = False
+                self.warning("Could not read GGA important number info ( Fix indicator, MSL, Geoid )", False)
+            try:
+                self.oCurrentFix.iSatUsed = int(lValues[7])
+            except:
+                self.info("Could not read GGA SatUsed")
 
         except:
             self.oCurrentFix.bValid = False
@@ -112,10 +158,9 @@ class GPSModule(UartModule):
                 self.oCurrentFix.fSpeedOverGround = knots_to_kph(float(lValues[7])) # kph
                 self.oCurrentFix.fCourseOverGround = float(lValues[8]) # degres
             except:
-                self.debug("No data for speed over ground or course over ground")
-
+                self.info("No data for speed over ground or course over ground", False)
         except Exception:
-            self.warning("Exception while parsing GPRMC trame : "+sTrame, False)
+            self.exception("Exception while parsing GPRMC trame : "+sTrame, False)
 
     def read_GPVTG(self, sTrame):
         pass
@@ -124,40 +169,54 @@ class GPSModule(UartModule):
         pass
 
     def read_GPGSA(self, sTrame):
-        pass
+        try:
+            lValues = sTrame.split(',')
+            try:
+                self.oCurrentFix.fPDOP = int(lValues[15])
+                self.oCurrentFix.fHDOP = int(lValues[16])
+                self.oCurrentFix.fVDOP = int(lValues[17]).split('*')[0]
+            except:
+                self.info("No data for PDOP or VDOP : ")
+        except:
+            self.exception("Exception while parsing GPGSA trame : " + sTrame, False)
 
     def read_GPGSV(self, sTrame):
         try:
             lValues = sTrame.split(',')
-            self.oCurrentFix.iSatInView = int(lValues[3])
+            try:
+                self.oCurrentFix.iSatInView = int(lValues[3])
+            except:
+                self.info("No data for sattelites in view : ")
         except:
-            self.warning("Exception while parsing GPGSV trame : " + sTrame, False)
+            self.exception("Exception while parsing GPGSV trame : " + sTrame, False)
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ CONVERSION @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
     def set_gps_time(self, sTime):
         try:
-            hms, millis = sTime.split('.')
-            millis = int(millis)
-            h = int(hms[:2])
-            m = int(hms[2:4])
-            s = int(hms[4:6])
-            self.oCurrentFix.dtGPSDate.hour = h
-            self.oCurrentFix.dtGPSDate.minute = m
-            self.oCurrentFix.dtGPSDate.second = s
-            self.oCurrentFix.dtGPSDate.microsecond = millis * 1000
+            if len(sTime) > 8: # TODO check if 8 is a good value
+                hms, millis = sTime.split('.')
+                micro = int(millis) * 1000
+                h = int(hms[:2])
+                m = int(hms[2:4])
+                s = int(hms[4:6])
+                self.oCurrentFix.dtGPSDate = self.oCurrentFix.dtGPSDate.replace(hour=h)
+                self.oCurrentFix.dtGPSDate = self.oCurrentFix.dtGPSDate.replace(minute=m)
+                self.oCurrentFix.dtGPSDate = self.oCurrentFix.dtGPSDate.replace(second=s)
+                self.oCurrentFix.dtGPSDate = self.oCurrentFix.dtGPSDate.replace(microsecond=micro)
         except:
             self.exception("Failed to parse GPS time : "+str(sTime))
 
     def set_gps_date(self, sDate):
         try:
-            d = int(sDate[:2])
-            mth = int(sDate[2:4])
-            y = int(sDate[4:6])
-            self.oCurrentFix.dtGPSDate.day = d
-            self.oCurrentFix.dtGPSDate.month = mth
-            self.oCurrentFix.dtGPSDate.year = y
+            if len(sDate) == 6:
+                d = int(sDate[:2])
+                mth = int(sDate[2:4])
+                y = int(sDate[4:6]) + 2000
+                self.oCurrentFix.dtGPSDate = self.oCurrentFix.dtGPSDate.replace(year=y)
+                self.oCurrentFix.dtGPSDate = self.oCurrentFix.dtGPSDate.replace(month=mth)
+                self.oCurrentFix.dtGPSDate = self.oCurrentFix.dtGPSDate.replace(day=d)
         except:
             self.exception("Failed to parse GPS date: " + str(sDate))
 
@@ -170,14 +229,16 @@ class GPSFix():
 
     def __init__(self):
         # Validity
-        self.bValid = False
+        self.bValid = True
         self.iPositionFixIndicator = -1 # 0 = No fix, 6 = dead reckoning, 1,2 = ok
         # Coordinates
         self.sLatitude = ""
         self.sNSIndicator = ""
         self.sLongitude = ""
         self.sEWIndicator = ""
+        self.fPDOP = -1
         self.fHDOP = -1
+        self.fVDOP = -1
         #Altitude
         self.fAltitudeMSL = -1
         self.fGeoid = -1
@@ -192,9 +253,10 @@ class GPSFix():
         self.iSatInView = -1
 
     def log_str(self):
-        sLog = "FixIndic : "+str(self.iPositionFixIndicator)+", Coordinatates : "+self.sLatitude+" "+self.sNSIndicator+" "+self.sLongitude+" "+self.sEWIndicator+", Precision : "+str(self.fHDOP)\
-        +", Altitude : "+str(self.fAltitudeMSL)+"m MSL "+str(self.fGeoid)+"m Geoid, Speed :"+str(self.fSpeedOverGround)+"kph "+str(self.fCourseOverGround)+"°, System Date : "+str(self.dtSystemDate)\
-        +" GPS Date : "+str(self.dtGPSDate)+", SatUsed : "+str(self.iSatUsed+" SatInView : "+str(self.iSatInView))
+        sLog = "FixIndic "+str(self.iPositionFixIndicator)+", Coords "+self.sLatitude+" "+self.sNSIndicator+" "+self.sLongitude+" "+self.sEWIndicator+", PDOP, HDOP, VDOP "+str(round(self.fPDOP, 2))\
+        +" "+str(round(self.fHDOP, 2))+" "+str(round(self.fVDOP, 2))+", AltMSL "+str(self.fAltitudeMSL)+"m Geo : "+str(self.fGeoid)+"m, Speed : "+str(round(self.fSpeedOverGround, 2))+"kph "\
+        +str(round(self.fCourseOverGround, 2))+"°, SysDt "+str(self.dtSystemDate)+" GPSDt "+str(self.dtGPSDate)+", SatUsed "+str(self.iSatUsed)+" SatInView "+str(self.iSatInView)
+        return sLog
 
 
 
@@ -203,5 +265,5 @@ class GPSFix():
 
 
 
-def knots_to_kph(self, fKnots):
+def knots_to_kph(fKnots):
     return fKnots * 1.852
