@@ -69,7 +69,7 @@ GPIO.output(BLUE_LED, GPIO.LOW)
 GPIO.output(GREEN_LED, GPIO.LOW)
 
 t = LightThread()
-
+t.start()
 
 bBlue = True
 """
