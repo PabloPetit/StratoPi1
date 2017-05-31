@@ -16,17 +16,17 @@ class LightThread(Thread):
 
     def run(self):
         global  bGreen, bBlue
-        if bGreen:
-            GPIO.output(GREEN_LED, not GPIO.input(GREEN_LED))
-        else:
-            GPIO.output(GREEN_LED, GPIO.LOW)
+        while True:
+            if bGreen:
+                GPIO.output(GREEN_LED, not GPIO.input(GREEN_LED))
+            else:
+                GPIO.output(GREEN_LED, GPIO.LOW)
 
-        if bBlue:
-            GPIO.output(BLUE_LED, not GPIO.input(BLUE_LED))
-        else:
-            GPIO.output(BLUE_LED, GPIO.LOW)
-        print("running")
-        time.sleep(0.5)
+            if bBlue:
+                GPIO.output(BLUE_LED, not GPIO.input(BLUE_LED))
+            else:
+                GPIO.output(BLUE_LED, GPIO.LOW)
+            time.sleep(0.5)
 
 if not os.path.isdir( MAIN_LOG_PATH  ):
     os.makedirs(MAIN_LOG_PATH )
