@@ -7,27 +7,25 @@ import RPi.GPIO as GPIO
 from gps_module import *
 from camera_module import *
 
-
+bGreen, bBlue = False, False
 
 class LightThread(Thread):
 
     def __init__(self):
         Thread.__init__(self)
-        self.bGreen = False
-        self.bBlue = False
 
     def run(self):
-
-        if self.bGreen:
+        global  bGreen, bBlue
+        if bGreen:
             GPIO.output(GREEN_LED, not GPIO.input(GREEN_LED))
         else:
             GPIO.output(GREEN_LED, GPIO.LOW)
 
-        if self.bBlue:
+        if bBlue:
             GPIO.output(BLUE_LED, not GPIO.input(BLUE_LED))
         else:
             GPIO.output(BLUE_LED, GPIO.LOW)
-
+        print("running")
         time.sleep(0.5)
 
 if not os.path.isdir( MAIN_LOG_PATH  ):
@@ -72,7 +70,7 @@ GPIO.output(GREEN_LED, GPIO.LOW)
 t = LightThread()
 t.start()
 
-t.bBlue = True
+bBlue = True
 """
 gsm = GsmModule(oLog, GSM_UART_PORT)
 gsm.setup()
@@ -82,7 +80,7 @@ gsm.start()
 while GPIO.input(BUTTON):
 
     time.sleep(WAIT_FOR_MISSION_LAUNCH_SLEEP)
-t.bGreen = True
+bGreen = True
 
 gps = GPSModule(oLog, GPS_UART_PORT)
 gps.setup()
