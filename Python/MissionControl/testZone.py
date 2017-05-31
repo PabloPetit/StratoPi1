@@ -1,10 +1,36 @@
 print("Starting tests")
 
+
+
+class LightThread():
+
+    def __init__(self):
+        Thread.__init__()
+
+    def run(self):
+        global bGreen, bBlue
+
+        if bGreen:
+            GPIO.output(GREEN_LED, not GPIO.input(GREEN_LED))
+        else:
+            GPIO.output(GREEN_LED, GPIO.LOW)
+
+        if bBlue:
+            GPIO.output(BLUE_LED, not GPIO.input(BLUE_LED))
+        else:
+            GPIO.output(BLUE_LED, GPIO.LOW)
+
+        time.sleep(0.5)
+
+
+
 from config import *
 import RPi.GPIO as GPIO
 
 from gps_module import *
 from camera_module import *
+
+bBlue, bGreen = False, False
 
 if not os.path.isdir( MAIN_LOG_PATH  ):
     os.makedirs(MAIN_LOG_PATH )
@@ -45,7 +71,10 @@ GPIO.setup(GREEN_LED, GPIO.OUT)
 GPIO.output(BLUE_LED, GPIO.HIGH)
 GPIO.output(GREEN_LED, GPIO.LOW)
 
-print("Blue On")
+t = LightThread()
+
+
+bBlue = True
 """
 gsm = GsmModule(oLog, GSM_UART_PORT)
 gsm.setup()
@@ -55,12 +84,13 @@ gsm.start()
 while GPIO.input(BUTTON):
 
     time.sleep(WAIT_FOR_MISSION_LAUNCH_SLEEP)
-print("GPS STARTING")
+bGreen = True
+
 gps = GPSModule(oLog, GPS_UART_PORT)
 gps.setup()
 gps.start()
 
-GPIO.output(GREEN_LED, GPIO.HIGH)
+
 print("Green on")
 """
 Camera = CameraModule(oMainLog)
@@ -72,8 +102,6 @@ adc = ADCModule(oLog)
 adc.setup()
 adc.start()
 """
-
-
 
 
 
