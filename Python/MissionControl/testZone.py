@@ -1,6 +1,13 @@
 print("Starting tests")
 
 
+from config import *
+import RPi.GPIO as GPIO
+
+from gps_module import *
+from camera_module import *
+
+bBlue, bGreen = False, False
 
 class LightThread():
 
@@ -21,16 +28,6 @@ class LightThread():
             GPIO.output(BLUE_LED, GPIO.LOW)
 
         time.sleep(0.5)
-
-
-
-from config import *
-import RPi.GPIO as GPIO
-
-from gps_module import *
-from camera_module import *
-
-bBlue, bGreen = False, False
 
 if not os.path.isdir( MAIN_LOG_PATH  ):
     os.makedirs(MAIN_LOG_PATH )
@@ -68,7 +65,7 @@ GPIO.setup(BUTTON, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.setup(BLUE_LED, GPIO.OUT)
 GPIO.setup(GREEN_LED, GPIO.OUT)
 
-GPIO.output(BLUE_LED, GPIO.HIGH)
+GPIO.output(BLUE_LED, GPIO.LOW)
 GPIO.output(GREEN_LED, GPIO.LOW)
 
 t = LightThread()
