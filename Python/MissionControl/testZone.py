@@ -12,7 +12,7 @@ from camera_module import *
 class LightThread():
 
     def __init__(self):
-        Thread.__init__()
+        Thread.__init__(self)
         self.bGreen = False
         self.bBlue = False
 
