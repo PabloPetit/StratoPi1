@@ -35,7 +35,7 @@ MINIMAL_LOCATION_SMS_SENT = 10
 #@@@@@@@@@@@@@@ PRINTER RELATED @@@@@@@@@@@@
 
 
-LOG_FILE_ROTATION_MINUTES = 15#30
+LOG_FILE_ROTATION_MINUTES = 45#30
 DEFAULT_MAIN_LOG_INTERVAL = timedelta(minutes = 3)
 HOME_PATH = "/home/pi/Documents/MissionData/"
 #HOME_PATH = "/Users/Pablo/Documents/MissionData/"
