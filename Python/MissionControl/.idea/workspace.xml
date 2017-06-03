@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fa9ec6fc-c61d-4ce0-b617-b967cd5c8f1e" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/camera_module.py" afterPath="$PROJECT_DIR$/camera_module.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.py" afterPath="$PROJECT_DIR$/config.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gps_module.py" afterPath="$PROJECT_DIR$/gps_module.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/testZone.py" afterPath="$PROJECT_DIR$/testZone.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -84,11 +81,11 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="config.py" pinned="false" current-in-tab="false">
+          <file leaf-file-name="config.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/config.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-1138">
-                  <caret line="22" column="0" lean-forward="true" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+                <state relative-caret-position="127">
+                  <caret line="164" column="0" lean-forward="true" selection-start-line="164" selection-start-column="0" selection-end-line="164" selection-end-column="0" />
                   <folding>
                     <element signature="e#0#40#0" expanded="true" />
                   </folding>
@@ -96,7 +93,7 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="testZone.py" pinned="false" current-in-tab="true">
+          <file leaf-file-name="testZone.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/testZone.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="1260">
@@ -189,10 +186,10 @@
         <option value="$PROJECT_DIR$/uart_module.py" />
         <option value="$PROJECT_DIR$/module.py" />
         <option value="$PROJECT_DIR$/main.py" />
-        <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/testZone.py" />
         <option value="$PROJECT_DIR$/gps_module.py" />
         <option value="$PROJECT_DIR$/camera_module.py" />
+        <option value="$PROJECT_DIR$/config.py" />
       </list>
     </option>
   </component>
@@ -829,16 +826,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1138">
-          <caret line="22" column="0" lean-forward="true" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/camera_module.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1215">
@@ -859,6 +846,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/testZone.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1260">
+          <caret line="84" column="0" lean-forward="true" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
+          <folding>
+            <element signature="e#26#46#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/module.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="183">
@@ -869,12 +866,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/testZone.py">
+    <entry file="file://$PROJECT_DIR$/config.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1260">
-          <caret line="84" column="0" lean-forward="true" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
+        <state relative-caret-position="127">
+          <caret line="164" column="0" lean-forward="true" selection-start-line="164" selection-start-column="0" selection-end-line="164" selection-end-column="0" />
           <folding>
-            <element signature="e#26#46#0" expanded="true" />
+            <element signature="e#0#40#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -37,8 +37,8 @@ MINIMAL_LOCATION_SMS_SENT = 10
 
 LOG_FILE_ROTATION_MINUTES = 15#30
 DEFAULT_MAIN_LOG_INTERVAL = timedelta(minutes = 3)
-#HOME_PATH = "/home/pi/Documents/MissionData/"
-HOME_PATH = "/Users/Pablo/Documents/MissionData/"
+HOME_PATH = "/home/pi/Documents/MissionData/"
+#HOME_PATH = "/Users/Pablo/Documents/MissionData/"
 
 LOG_FORMATTER = logging.Formatter("[ %(name)s - %(levelname)s ] %(asctime)s - %(message)s")
 RAW_LOG_FORMATTER = logging.Formatter("[ RAW ] %(asctime)s --- \n%(message)s")
@@ -160,8 +160,8 @@ GPGSV = "GPGSV"
 #@@@@@@@@@@@@@@ UART RELATED @@@@@@@@@@@@@@@@
 
 GSM_UART_PORT = '/dev/ttyUSB0'
-#GPS_UART_PORT = '/dev/serial0'
-GPS_UART_PORT = '/dev/tty.usbserial-A503S1B9'
+GPS_UART_PORT = '/dev/serial0'
+#GPS_UART_PORT = '/dev/tty.usbserial-A503S1B9'
 
 DEFAULT_UART_PORT = '/dev/serial0'
 DEFAULT_UART_COMMAND_TIMEOUT = 1
