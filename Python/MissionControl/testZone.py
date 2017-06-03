@@ -2,13 +2,13 @@ print("Starting tests")
 
 
 from config import *
-import RPi.GPIO as GPIO
+
 
 from gps_module import *
-from camera_module import *
-
+#from camera_module import *
+"""
 bGreen, bBlue = False, False
-
+import RPi.GPIO as GPIO
 class LightThread(Thread):
 
     def __init__(self):
@@ -27,6 +27,7 @@ class LightThread(Thread):
             else:
                 GPIO.output(BLUE_LED, GPIO.LOW)
             time.sleep(0.5)
+"""
 
 if not os.path.isdir( MAIN_LOG_PATH  ):
     os.makedirs(MAIN_LOG_PATH )
@@ -56,7 +57,7 @@ oLog.setLevel(logging.DEBUG)  # Acceptes everthings, filter done with handlers
 oLog.addHandler(oDebugHandler)
 oLog.addHandler(oInfoHandler)
 oLog.addHandler(oWarningHandler)
-
+"""
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
 
@@ -72,22 +73,23 @@ t.start()
 
 bBlue = True
 """
+"""
 gsm = GsmModule(oLog, GSM_UART_PORT)
 gsm.setup()
 gsm.start()
 """
 
+"""
 while GPIO.input(BUTTON):
-
     time.sleep(WAIT_FOR_MISSION_LAUNCH_SLEEP)
-bGreen = True
 
+bGreen = True
+"""
 gps = GPSModule(oLog, GPS_UART_PORT)
 gps.setup()
 gps.start()
 
 
-print("Green on")
 """
 Camera = CameraModule(oMainLog)
 Camera.setup()

@@ -172,11 +172,11 @@ class GPSModule(UartModule):
         try:
             lValues = sTrame.split(',')
             try:
-                self.oCurrentFix.fPDOP = int(lValues[15])
-                self.oCurrentFix.fHDOP = int(lValues[16])
-                self.oCurrentFix.fVDOP = int(lValues[17]).split('*')[0]
+                self.oCurrentFix.fPDOP = float(lValues[15])
+                self.oCurrentFix.fHDOP = float(lValues[16])
+                self.oCurrentFix.fVDOP = float(lValues[17].split('*')[0])
             except:
-                self.info("No data for PDOP or VDOP : ")
+                self.info("No data for PDOP, HDOP or VDOP : "+sTrame)
         except:
             self.exception("Exception while parsing GPGSA trame : " + sTrame, False)
 

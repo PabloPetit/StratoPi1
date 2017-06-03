@@ -79,7 +79,7 @@ class CameraModule(Module):
             self.exception("Error while wait_recording")
 
     def select_camera_setting(self):
-        self.oCurrentSetting =  CAMERA_MAX_SETTING
+        self.oCurrentSetting =  CAMERA_LOW_SETTING
 
     def apply_camera_setting(self):
         self.oCam.resolution = self.oCurrentSetting.lVideoResolution
