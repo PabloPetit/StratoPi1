@@ -120,6 +120,7 @@ class GsmModule( UartModule ):
 
     def end_run(self):
         #TODO: Send AT+CPOWD=1
+        self.send_command("AT+CPOWD=1", {})
         super(GsmModule, self).end_run()
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ HARD RESET @@@@@@@@@@@@@@@@@@@@@
