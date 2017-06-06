@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fa9ec6fc-c61d-4ce0-b617-b967cd5c8f1e" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/aliveLed.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gsm_module.py" afterPath="$PROJECT_DIR$/gsm_module.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/aliveLed.py" afterPath="$PROJECT_DIR$/aliveLed.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
