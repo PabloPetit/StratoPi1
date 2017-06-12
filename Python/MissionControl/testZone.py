@@ -44,9 +44,9 @@ oMainLog.addHandler(oDebugHandler)
 oMainLog.addHandler(oInfoHandler)
 oMainLog.addHandler(oWarningHandler)
 
-bGPS = False
+bGPS = True
 bCam = True
-bADC = False
+bADC = True
 
 if bGPS:
     gps = GPSModule(oMainLog, GPS_UART_PORT)

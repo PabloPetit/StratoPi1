@@ -37,7 +37,7 @@ class Module( Thread ):
         self.create_periodical_checks()
         dModules[self.name] = self
 
-    def add_periodical_checks(self, oPer, sName):
+    def add_periodical_checks(self, sName, oPer):
         global dMainPeriodicalChecks
         self.dPeriodicalChecks[sName] = oPer
         dMainPeriodicalChecks[sName] = oPer
