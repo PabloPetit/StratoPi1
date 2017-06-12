@@ -38,24 +38,30 @@ oDebugHandler.setLevel(logging.DEBUG)
 oInfoHandler.setLevel(logging.INFO)
 oWarningHandler.setLevel(logging.WARNING)
 
-oLog = logging.getLogger("MainLogger")
-oLog.setLevel(logging.DEBUG)  # Acceptes everthings, filter done with handlers
-oLog.addHandler(oDebugHandler)
-oLog.addHandler(oInfoHandler)
-oLog.addHandler(oWarningHandler)
+oMainLog = logging.getLogger("MainLogger")
+oMainLog.setLevel(logging.DEBUG)  # Acceptes everthings, filter done with handlers
+oMainLog.addHandler(oDebugHandler)
+oMainLog.addHandler(oInfoHandler)
+oMainLog.addHandler(oWarningHandler)
 
-"""
-gps = GPSModule(oLog, GPS_UART_PORT)
-gps.setup()
-gps.start()
+bGPS = False
+bCam = True
+bADC = False
 
-Camera = CameraModule(oMainLog)
-Camera.setup()
-Camera.start()
-"""
-adc = ADCModule(oLog)
-adc.setup()
-adc.start()
+if bGPS:
+    gps = GPSModule(oMainLog, GPS_UART_PORT)
+    gps.setup()
+    gps.start()
+
+if bCam:
+    Camera = CameraModule(oMainLog)
+    Camera.setup()
+    Camera.start()
+
+if bADC:
+    adc = ADCModule(oMainLog)
+    adc.setup()
+    adc.start()
 
 
 
