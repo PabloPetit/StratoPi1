@@ -199,7 +199,7 @@ class ADCState(PeriodicalCheck):
     def __init__(self, funCommand, fTimeout, sName):
         PeriodicalCheck.__init__(self, funCommand, fTimeout, sName)
         self.iState = 1
-
+        self.lBattery = [0,0]
         self.lTempBattery = [0, 0, 0]
         self.lTempOutside = [0, 0, 0]
         self.lUV = [0, 0]

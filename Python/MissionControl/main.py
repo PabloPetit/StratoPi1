@@ -14,6 +14,12 @@ def create_main_log():
     if not os.path.isdir(MAIN_LOG_PATH):
         os.makedirs(MAIN_LOG_PATH)
 
+    if not os.path.isdir(CAMERA_CAPTURE_PATH):
+        os.makedirs(CAMERA_CAPTURE_PATH)
+
+    if not os.path.isdir(CAMERA_VIDEO_PATH):
+        os.makedirs(CAMERA_VIDEO_PATH)
+
     global oDebugHandler, oInfoHandler, oWarningHandler, oMainLog
 
     oDebugHandler = logging.handlers.TimedRotatingFileHandler(MAIN_LOG_PATH + DEBUG_LOG_PATH, when="m",
