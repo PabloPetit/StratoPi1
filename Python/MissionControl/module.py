@@ -79,7 +79,7 @@ class Module( Thread ):
 
 
     def create_periodical_checks(self):
-        raise NotImplementedError("create_command_states not implemented")
+        raise NotImplementedError("create_periodical_states not implemented")
 
     def run(self):
         self.info("Run Started", True)

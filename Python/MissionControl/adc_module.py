@@ -19,7 +19,7 @@ class ADCModule(Module):
     def evaluate_module_ready(self):
         return True
 
-    def create_peridical_checks(self):
+    def create_periodical_checks(self):
         self.add_periodical_checks(ADC_STATE, ADCState(self.check_adc, ADC_REFRESH_TIMEOUT, ADC_STATE))
 
     def send_raw_log(self): # Degres Bat, Degres Out, UV
