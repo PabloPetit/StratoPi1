@@ -44,7 +44,7 @@ oLog.addHandler(oDebugHandler)
 oLog.addHandler(oInfoHandler)
 oLog.addHandler(oWarningHandler)
 
-
+"""
 gps = GPSModule(oLog, GPS_UART_PORT)
 gps.setup()
 gps.start()
@@ -52,7 +52,7 @@ gps.start()
 Camera = CameraModule(oMainLog)
 Camera.setup()
 Camera.start()
-
+"""
 adc = ADCModule(oLog)
 adc.setup()
 adc.start()
