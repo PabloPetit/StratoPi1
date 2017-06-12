@@ -99,7 +99,7 @@ class CameraModule(Module):
             sCaptureFilename = self.get_capture_filename()
             self.dtLastCapture = datetime.now()
             self.oCam.capture(sCaptureFilename, resize = self.oCurrentSetting.lCaptureResolution)
-            self.info("Capture of : "+sCaptureFilename)
+            self.info("Capture of : "+sCaptureFilename, True)
         except:
             self.exception("Capture Failed")
 

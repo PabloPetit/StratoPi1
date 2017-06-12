@@ -16,6 +16,9 @@ dMainPeriodicalChecks = {}
 bConfirmSMSReceived = False
 bEndMission = False
 
+dtSysStartTime = datetime.now()
+dtFirstGPSTime = datetime.min
+
 
 
 #@@@@@@@@@@@@@@ MISSION CONTROL RELATED @@@@@@@@@@
@@ -144,6 +147,7 @@ MEMORY_STATE = "memory"
 
 # @@@@@@@@@@@@@@@@@@@@@@@@ GPS RELATED @@@@@@@@@@@@@@@@
 
+UTC_OFFSET = 2
 
 GPS_MEMORY = 40
 

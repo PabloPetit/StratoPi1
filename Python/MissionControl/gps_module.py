@@ -1,5 +1,6 @@
 from uart_module import *
 import collections
+import subprocess
 
 class GPSModule(UartModule):
 
@@ -24,6 +25,7 @@ class GPSModule(UartModule):
             GPGSA : self.read_GPGSA,
             GPGSV : self.read_GPGSV
         }
+        self.bSysTimeSet = False
 
         self.oLastFix = None
         self.oCurrentFix = None
@@ -65,6 +67,9 @@ class GPSModule(UartModule):
 
     def module_run(self):
         try:
+            if not self.bSysTimeSet:
+                self.set_sys_time()
+
             self.set_buffer()
             if len(self.sLastBuffer) > 0:
                 self.oCurrentFix = GPSFix()
@@ -220,6 +225,15 @@ class GPSModule(UartModule):
         except:
             self.exception("Failed to parse GPS date: " + str(sDate))
 
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SET SYSTEM TIME @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+    def set_sys_time(self):
+        if self.oLastFix is None:
+            return
+        dtSysTime = self.oCurrentFix.dtGPSDate.replace(hour=(self.oCurrentFix.dtGPSDate.hour + UTC_OFFSET) % 24)
+
+        sDateCom = "date +%Y%m%d -s \"20081128\""
+        sTimeCom = "date +%T -s \"10:13:13\""
 
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ GPS FIX @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
