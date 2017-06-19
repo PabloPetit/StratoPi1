@@ -16,7 +16,7 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.64379334">
+    <splitter split-orientation="horizontal" split-proportion="0.72783345">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file leaf-file-name="gps_module.py" pinned="false" current-in-tab="false">
@@ -68,8 +68,8 @@
           <file leaf-file-name="camera_module.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/camera_module.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="211">
-                  <caret line="163" column="42" lean-forward="false" selection-start-line="163" selection-start-column="42" selection-end-line="163" selection-end-column="42" />
+                <state relative-caret-position="276">
+                  <caret line="305" column="24" lean-forward="true" selection-start-line="305" selection-start-column="24" selection-end-line="305" selection-end-column="24" />
                   <folding>
                     <element signature="e#0#20#0" expanded="true" />
                   </folding>
@@ -106,7 +106,7 @@
           <file leaf-file-name="config.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/config.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="188">
+                <state relative-caret-position="-196">
                   <caret line="185" column="0" lean-forward="false" selection-start-line="185" selection-start-column="0" selection-end-line="185" selection-end-column="0" />
                   <folding>
                     <element signature="e#0#40#0" expanded="true" />
@@ -882,7 +882,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
+        <state relative-caret-position="-196">
           <caret line="185" column="0" lean-forward="false" selection-start-line="185" selection-start-column="0" selection-end-line="185" selection-end-column="0" />
           <folding>
             <element signature="e#0#40#0" expanded="true" />
@@ -892,8 +892,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/camera_module.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
-          <caret line="163" column="42" lean-forward="false" selection-start-line="163" selection-start-column="42" selection-end-line="163" selection-end-column="42" />
+        <state relative-caret-position="276">
+          <caret line="305" column="24" lean-forward="true" selection-start-line="305" selection-start-column="24" selection-end-line="305" selection-end-column="24" />
           <folding>
             <element signature="e#0#20#0" expanded="true" />
           </folding>

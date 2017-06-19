@@ -46,12 +46,13 @@ class CameraModule(Module):
         pass
 
     def evaluate_module_ready(self):
-        return self.oCam is not None and self.bCaptureOk
+        self.bIsReady =  self.oCam is not None and self.bCaptureOk
 
     def end_run(self):
         if self.oCam:
             try:
                 self.oCam.close()
+                self.info("Camera correctly closed")
             except:
                 self.exception("Could not close the PiCamera")
         super(CameraModule, self).end_run()
@@ -68,23 +69,28 @@ class CameraModule(Module):
 
 
     def manage_sleep(self):
+        self.debug("Managing sleep")
         tVideoSleep = self.oCurrentSetting.tVideoDuration - (datetime.now() - self.dtStartRecoding)
         tCaptureSleep = self.oCurrentSetting.tCaptureInterval - (datetime.now() - self.dtLastCapture)
         tSleep = min(tVideoSleep, tCaptureSleep)
         fSleep = tSleep.seconds + (tSleep.microseconds / 1000000)
         fSleep = max(0, fSleep)
+        self.info("Sleep time is : "+str(fSleep))
         try:
             if self.bIsRecording:
+                self.debug("Sleeping in recording mode ...")
                 self.oCam.wait_recording(fSleep)
             else:
+                self.debug("Sleeping in normal mode ...")
                 time.sleep(fSleep)
         except:
             self.exception("Error while wait_recording")
 
     def select_camera_setting(self):
-        self.oCurrentSetting =  CAMERA_LOW_SETTING
+        self.oCurrentSetting =  CAMERA_MAX_SETTING
 
     def apply_camera_setting(self):
+        self.debug("Applying video settings")
         self.oCam.resolution = self.oCurrentSetting.lVideoResolution
         self.oCam.framerate = self.oCurrentSetting.iFPS
 
@@ -109,6 +115,7 @@ class CameraModule(Module):
     def manage_record(self):
         self.debug("Managing record")
         if self.bIsRecording :
+            self.debug("Case : Recording")
             tElapsedTime = self.oCurrentSetting.tVideoDuration - (datetime.now() - self.dtStartRecoding)
             self.debug("Elapsed Time since beginning of video recording : "+str(tElapsedTime))
             self.debug("Video record in current setting : "+str(self.oCurrentSetting.bRecordVideo))
@@ -117,16 +124,21 @@ class CameraModule(Module):
             if self.oCurrentSetting.bRecordVideo and not self.bIsRecording:
                 self.start_video_recording()
         else:
+            self.debug("Case : Not Recording")
             if self.oCurrentSetting.bRecordVideo:
                 self.start_video_recording()
 
     def start_video_recording(self):
         try:
+            self.info("Starting video record")
             sVideoFilename = self.get_video_filename()
+            self.debug("Video Filename : "+sVideoFilename)
             self.bIsRecording = True
             self.dtStartRecoding = datetime.now()
             self.iVideoCount += 1
+            self.info("Video count : "+str(self.iVideoCount))
             self.apply_camera_setting()
+            self.debug("Starting Video record ...")
             self.oCam.start_recording(sVideoFilename)
             self.info("Video Record Started : " + sVideoFilename, True)
         except:
@@ -134,6 +146,7 @@ class CameraModule(Module):
 
     def stop_video_recording(self):
         try:
+            self.debug("Stopping video recording ...")
             self.oCam.stop_recording()
             self.bIsRecording = False
             self.info("Video Record Stopped", True)
