@@ -74,7 +74,10 @@ class CameraModule(Module):
         fSleep = tSleep.seconds + (tSleep.microseconds / 1000000)
         fSleep = max(0, fSleep)
         try:
-            self.oCam.wait_recording(fSleep)
+            if self.bIsRecording:
+                self.oCam.wait_recording(fSleep)
+            else:
+                time.sleep(fSleep)
         except:
             self.exception("Error while wait_recording")
 
