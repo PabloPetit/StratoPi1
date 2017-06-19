@@ -161,7 +161,7 @@ class CameraModule(Module):
             fSize = self.parse_size_string(lMainDisk[1])
             fUsed = self.parse_size_string(lMainDisk[2])
             fAvailable = self.parse_size_string(lMainDisk[3])
-            fPercentUsed = int(lMainDisk[3].replace('%',''))
+            fPercentUsed = int(lMainDisk[4].replace('%',''))
 
             if fSize != -1 and fUsed != -1 and fAvailable != -1 and fPercentUsed != -1:
                 oMemState = self.dPeriodicalChecks[MEMORY_STATE]
