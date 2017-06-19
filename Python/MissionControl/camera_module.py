@@ -155,7 +155,7 @@ class CameraModule(Module):
             lMainDisk = ""
             for l in lLines:
                 if l.split()[0] == MAIN_DISK_PATH:
-                    lMainDisk = l
+                    lMainDisk = l.split()
                     break
 
             fSize = self.parse_size_string(lMainDisk[1])
