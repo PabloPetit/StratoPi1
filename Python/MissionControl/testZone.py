@@ -7,7 +7,9 @@ from config import *
 from gps_module import *
 from camera_module import *
 from adc_module import *
+from gsm_module import *
 
+GPIO.setmode(GPIO.BOARD)
 
 if not os.path.isdir( MAIN_LOG_PATH  ):
     os.makedirs(MAIN_LOG_PATH )
@@ -47,6 +49,7 @@ oMainLog.addHandler(oWarningHandler)
 bGPS = True
 bCam = True
 bADC = True
+bGSM = True
 
 if bGPS:
     gps = GPSModule(oMainLog, GPS_UART_PORT)
@@ -62,6 +65,11 @@ if bADC:
     adc = ADCModule(oMainLog)
     adc.setup()
     adc.start()
+
+if bGSM:
+    gsm = GsmModule(oMainLog, GSM_UART_PORT)
+    gsm.setup()
+    gsm.start()
 
 
 

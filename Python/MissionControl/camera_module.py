@@ -75,7 +75,7 @@ class CameraModule(Module):
         tSleep = min(tVideoSleep, tCaptureSleep)
         fSleep = tSleep.seconds + (tSleep.microseconds / 1000000)
         fSleep = max(0, fSleep)
-        self.info("Sleep time is : "+str(fSleep))
+        self.info("Sleep time is : "+str(fSleep)+ " sec")
         try:
             if self.bIsRecording:
                 self.debug("Sleeping in recording mode ...")
@@ -273,7 +273,7 @@ CAMERA_MAX_SETTING = CameraSetting(
                 bRecordVideo=True,
                 bRecordCapture=True,
                 tCaptureInterval=timedelta(seconds=30),
-                tVideoDuration=timedelta(minutes=15)
+                tVideoDuration=timedelta(minutes=5) # TODO 15 or more, 5 is for testing
             )
 
 CAMERA_HIGH_SETTING = CameraSetting(

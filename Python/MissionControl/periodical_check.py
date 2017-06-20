@@ -245,7 +245,14 @@ class MemoryState(PeriodicalCheck):
         }
 
     def set_state(self):
-        pass
+        for k in self.dStates.keys():
+            if self.fPercentUsed >= self.dStates[k][0]:
+                self.iState = k
+                break
+
+    def log_str(self):
+        return "Size : "+str(self.fSize)+" Used : "+str(self.fUsed)+" Available : "+str(self.fAvailable)+" Percent : "+str(self.fPercentUsed)
+
 
 
 
