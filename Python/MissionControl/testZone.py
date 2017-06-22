@@ -10,6 +10,19 @@ from adc_module import *
 from gsm_module import *
 
 GPIO.setmode(GPIO.BOARD)
+GPIO.setwarnings(False)
+
+GPIO.setup(SPIMOSI, GPIO.OUT)
+GPIO.setup(SPIMISO, GPIO.IN)
+GPIO.setup(SPICLK, GPIO.OUT)
+GPIO.setup(SPICS, GPIO.OUT)
+GPIO.setup(BUTTON, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(BLUE_LED, GPIO.OUT)
+GPIO.setup(GREEN_LED, GPIO.OUT)
+GPIO.setup(GSM_RESET_PIN, GPIO.OUT)
+GPIO.setup(LIFE_LINE_PIN, GPIO.OUT)
+
+GPIO.output(LIFE_LINE_PIN, GPIO.HIGH)
 
 if not os.path.isdir( MAIN_LOG_PATH  ):
     os.makedirs(MAIN_LOG_PATH )

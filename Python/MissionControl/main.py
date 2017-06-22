@@ -64,6 +64,9 @@ def setup_GPIO():
     GPIO.setup(BLUE_LED, GPIO.OUT)
     GPIO.setup(GREEN_LED, GPIO.OUT)
     GPIO.setup(GSM_RESET_PIN, GPIO.OUT)
+    GPIO.setup(LIFE_LINE_PIN, GPIO.OUT)
+
+    GPIO.output(LIFE_LINE_PIN, GPIO.HIGH) # VERY IMPORTANT
 
     GPIO.output(BLUE_LED, GPIO.HIGH)
     GPIO.output(GREEN_LED, GPIO.LOW)
