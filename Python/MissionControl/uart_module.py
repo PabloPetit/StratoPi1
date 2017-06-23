@@ -73,7 +73,9 @@ class UartModule(Module):
             sCommand+="\r\n"
             self.oSer.write(sCommand.encode("ascii"))
         except OSError:
-            self.exception(" --- UART NOT FOUND ---")
+            self.exception("--- UART NOT FOUND ---")
+        except AttributeError:
+            self.critical("UART UNPLUGGED")
 
     def read_buffer(self, bGetRaw = False):
         try:
