@@ -18,5 +18,8 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
 
 GPIO.setup(BLUE_LED, GPIO.OUT)
+GPIO.setup(LIFE_LINE_PIN, GPIO.OUT)
+GPIO.output(LIFE_LINE_PIN, GPIO.HIGH)
+
 t = LightThread()
 t.start()
