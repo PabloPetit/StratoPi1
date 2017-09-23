@@ -59,9 +59,9 @@ oMainLog.addHandler(oDebugHandler)
 oMainLog.addHandler(oInfoHandler)
 oMainLog.addHandler(oWarningHandler)
 
-bGPS = True
-bCam = True
-bADC = True
+bGPS = False
+bCam = False
+bADC = False
 bGSM = True
 
 if bGPS:
