@@ -69,7 +69,7 @@ for i in range(0,10):
 
 
 bGPS = True
-bCam = True
+bCam = False
 bADC = False
 bGSM = True
 
