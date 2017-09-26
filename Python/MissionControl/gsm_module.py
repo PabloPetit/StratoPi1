@@ -19,7 +19,8 @@ class GsmModule( UartModule ):
             "CONFIRM" : self.confirm_network,
             "REG" : self.register_numbers,
             "LOCATION" : self.send_location,
-            "END_MISSION" : self.end_mission
+            "END_MISSION" : self.end_mission,
+            "SHUTDOWN" : self.shutdown
         }
 
         self.default_sms_command = self.send_default_sms
@@ -313,6 +314,14 @@ class GsmModule( UartModule ):
             self.info("End mission sms received")
         except:
             self.exception("Exception while ending mission")
+
+    def shutdown(self, oSms):
+        try:
+            self.info("Shutdown sms received")
+            self.critical("SHUTING DOWN RASPBERRY")
+            os.system("sudo shutdown now")
+        except:
+            self.exception("Exception while shuting down raspi")
 
 
 

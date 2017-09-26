@@ -120,7 +120,7 @@ SPIMISO = 21
 SPIMOSI = 19
 SPICS = 24
 
-LIFE_LINE_PIN = 11
+LIFE_LINE_PIN = 11 # IMPORTANT : Life line is set to HIGH in Main.setup_GPIO()
 
 GREEN_LED = 16
 BLUE_LED = 13

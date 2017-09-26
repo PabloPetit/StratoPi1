@@ -10,6 +10,7 @@ from camera_module import *
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ FUNCTIONS @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+
 def create_main_log():
     if not os.path.isdir(MAIN_LOG_PATH):
         os.makedirs(MAIN_LOG_PATH)
@@ -72,6 +73,7 @@ def setup_GPIO():
     GPIO.output(GREEN_LED, GPIO.LOW)
     GPIO.output(GSM_RESET_PIN, GPIO.LOW)
     oMainLog.info("GPIO setup done")
+
 
 
 def create_modules():
