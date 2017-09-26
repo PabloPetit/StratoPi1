@@ -59,6 +59,15 @@ oMainLog.addHandler(oDebugHandler)
 oMainLog.addHandler(oInfoHandler)
 oMainLog.addHandler(oWarningHandler)
 
+for i in range(0,10):
+    oMainLog.info("---------------\n")
+
+oMainLog.info("--------   STARTING NEW INSTANCE   -------\n")
+
+for i in range(0,10):
+    oMainLog.info("---------------\n")
+
+
 bGPS = True
 bCam = True
 bADC = False
