@@ -9,6 +9,14 @@ from camera_module import *
 from adc_module import *
 from gsm_module import *
 
+i = 0
+while os.path.isdir(HOME_PATH):
+    while HOME_PATH[len(HOME_PATH)].isdigit() or HOME_PATH[len(HOME_PATH)] == "/":
+        HOME_PATH = HOME_PATH[:len(HOME_PATH) - 1]
+    HOME_PATH += str(i) + "/"
+    i+=1
+
+
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
 

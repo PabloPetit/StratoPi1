@@ -11,6 +11,14 @@ from camera_module import *
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ FUNCTIONS @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
+def set_home_path():
+    i = 0
+    while os.path.isdir(HOME_PATH):
+        while HOME_PATH[len(HOME_PATH)].isdigit() or HOME_PATH[len(HOME_PATH)] == "/":
+            HOME_PATH = HOME_PATH[:len(HOME_PATH) - 1]
+        HOME_PATH += str(i) + "/"
+        i += 1
+
 def create_main_log():
     if not os.path.isdir(MAIN_LOG_PATH):
         os.makedirs(MAIN_LOG_PATH)
@@ -244,6 +252,9 @@ def shutdown():
 """
 
 """
+
+set_home_path()
+
 create_main_log()
 
 setup_GPIO()
