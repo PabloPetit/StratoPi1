@@ -9,6 +9,7 @@ from camera_module import *
 from adc_module import *
 from gsm_module import *
 
+print("StartUp")
 i = 0
 while os.path.isdir(HOME_PATH):
     while HOME_PATH[len(HOME_PATH)].isdigit() or HOME_PATH[len(HOME_PATH)] == "/":
@@ -16,6 +17,7 @@ while os.path.isdir(HOME_PATH):
     HOME_PATH += str(i) + "/"
     i+=1
 
+print("Done")
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
