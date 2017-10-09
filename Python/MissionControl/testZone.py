@@ -10,6 +10,9 @@ from adc_module import *
 from gsm_module import *
 
 i = 0
+
+print("BASE : "+HOME_PATH)
+
 while os.path.isdir(HOME_PATH):
     while HOME_PATH[ len(HOME_PATH) - 1 ].isdigit() or HOME_PATH[ len(HOME_PATH) - 1] == "/":
         HOME_PATH = HOME_PATH[:len(HOME_PATH) - 1]
@@ -18,7 +21,7 @@ while os.path.isdir(HOME_PATH):
     print(HOME_PATH)
     i+=1
 
-
+print("Final : "+HOME_PATH)
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
 
