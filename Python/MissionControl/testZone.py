@@ -14,7 +14,9 @@ i = 0
 while os.path.isdir(HOME_PATH):
     while HOME_PATH[len(HOME_PATH)].isdigit() or HOME_PATH[len(HOME_PATH)] == "/":
         HOME_PATH = HOME_PATH[:len(HOME_PATH) - 1]
+        print( HOME_PATH)
     HOME_PATH += str(i) + "/"
+    print(HOME_PATH)
     i+=1
 
 print("Done")
