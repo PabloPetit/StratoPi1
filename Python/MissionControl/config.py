@@ -70,8 +70,8 @@ INFO_LOG_PATH = "info.log"
 WARNING_LOG_PATH = "warning.log"
 RAW_LOG_PATH = "raw.log"
 
-CAMERA_CAPTURE_PATH = CAMERA_LOG_PATH+"Captures/"
-CAMERA_VIDEO_PATH = CAMERA_LOG_PATH+"Videos/"
+CAMERA_CAPTURE_PATH = None
+CAMERA_VIDEO_PATH = None
 
 #@@@@@@@@@@@@@@ SMS AND GSM RELATED @@@@@@@@@@@@@@
 
