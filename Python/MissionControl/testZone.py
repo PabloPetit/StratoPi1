@@ -9,7 +9,7 @@ from camera_module import *
 from adc_module import *
 from gsm_module import *
 
-i = 0
+i = 1
 
 print("BASE : "+HOME_PATH)
 
@@ -20,6 +20,12 @@ while os.path.isdir(HOME_PATH):
     HOME_PATH += str(i) + "/"
     print(HOME_PATH)
     i+=1
+
+GSM_LOG_PATH = HOME_PATH + GSM_NAME + '/'
+ADC_LOG_PATH = HOME_PATH + ADC_NAME + '/'
+CAMERA_LOG_PATH = HOME_PATH + CAMERA_NAME + '/'
+GPS_LOG_PATH = HOME_PATH + GPS_NAME + '/'
+MAIN_LOG_PATH = HOME_PATH + MAIN_LOG_NAME + '/'
 
 print("Final : "+HOME_PATH)
 GPIO.setmode(GPIO.BOARD)

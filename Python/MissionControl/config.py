@@ -55,11 +55,15 @@ ADC_NAME = "ADC"
 CAMERA_NAME = "Camera"
 GPS_NAME = "GPS"
 
-GSM_LOG_PATH = HOME_PATH + GSM_NAME + '/'
-ADC_LOG_PATH = HOME_PATH + ADC_NAME + '/'
-CAMERA_LOG_PATH = HOME_PATH + CAMERA_NAME + '/'
-GPS_LOG_PATH = HOME_PATH + GPS_NAME + '/'
-MAIN_LOG_PATH = HOME_PATH + MAIN_LOG_NAME + '/'
+"""
+        PATHs now set in set_home_path as directory creation might be needed
+"""
+
+GSM_LOG_PATH = None
+ADC_LOG_PATH = None
+CAMERA_LOG_PATH = None
+GPS_LOG_PATH = None
+MAIN_LOG_PATH = None
 
 DEBUG_LOG_PATH = "debug.log"
 INFO_LOG_PATH = "info.log"

@@ -12,12 +12,21 @@ from camera_module import *
 
 
 def set_home_path():
-    i = 0
+
+    global HOME_PATH, GSM_LOG_PATH, ADC_LOG_PATH, CAMERA_LOG_PATH, GPS_LOG_PATH, MAIN_LOG_PATH
+
+    i = 1
     while os.path.isdir(HOME_PATH):
-        while HOME_PATH[len(HOME_PATH)].isdigit() or HOME_PATH[len(HOME_PATH)] == "/":
+        while HOME_PATH[len(HOME_PATH) -1 ].isdigit() or HOME_PATH[len(HOME_PATH) -1 ] == "/":
             HOME_PATH = HOME_PATH[:len(HOME_PATH) - 1]
         HOME_PATH += str(i) + "/"
         i += 1
+
+    GSM_LOG_PATH = HOME_PATH + GSM_NAME + '/'
+    ADC_LOG_PATH = HOME_PATH + ADC_NAME + '/'
+    CAMERA_LOG_PATH = HOME_PATH + CAMERA_NAME + '/'
+    GPS_LOG_PATH = HOME_PATH + GPS_NAME + '/'
+    MAIN_LOG_PATH = HOME_PATH + MAIN_LOG_NAME + '/'
 
 def create_main_log():
     if not os.path.isdir(MAIN_LOG_PATH):
