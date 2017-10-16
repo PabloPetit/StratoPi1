@@ -11,26 +11,6 @@ from camera_module import *
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ FUNCTIONS @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
-def set_home_path():
-
-    global HOME_PATH, GSM_LOG_PATH, ADC_LOG_PATH, CAMERA_LOG_PATH, GPS_LOG_PATH, MAIN_LOG_PATH, CAMERA_CAPTURE_PATH, CAMERA_VIDEO_PATH
-
-    i = 1
-    while os.path.isdir(HOME_PATH):
-        while HOME_PATH[len(HOME_PATH) -1 ].isdigit() or HOME_PATH[len(HOME_PATH) -1 ] == "/":
-            HOME_PATH = HOME_PATH[:len(HOME_PATH) - 1]
-        HOME_PATH += str(i) + "/"
-        i += 1
-
-    GSM_LOG_PATH = HOME_PATH + GSM_NAME + '/'
-    ADC_LOG_PATH = HOME_PATH + ADC_NAME + '/'
-    CAMERA_LOG_PATH = HOME_PATH + CAMERA_NAME + '/'
-    GPS_LOG_PATH = HOME_PATH + GPS_NAME + '/'
-    MAIN_LOG_PATH = HOME_PATH + MAIN_LOG_NAME + '/'
-
-    CAMERA_CAPTURE_PATH = CAMERA_LOG_PATH + "Captures/"
-    CAMERA_VIDEO_PATH = CAMERA_LOG_PATH + "Videos/"
-
 def create_main_log():
     if not os.path.isdir(MAIN_LOG_PATH):
         os.makedirs(MAIN_LOG_PATH)

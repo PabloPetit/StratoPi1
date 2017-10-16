@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import logging
 import logging.handlers
 import serial
+import os
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ GLOBAL VARIABLES @@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -43,6 +44,7 @@ DEFAULT_MAIN_LOG_INTERVAL = timedelta(minutes = 3)
 HOME_PATH = "/home/pi/Documents/MissionData/"
 #HOME_PATH = "/Users/Pablo/Documents/MissionData/"
 
+
 LOG_FORMATTER = logging.Formatter("[ %(name)s - %(levelname)s ] %(asctime)s - %(message)s")
 RAW_LOG_FORMATTER = logging.Formatter("[ RAW ] %(asctime)s --- \n%(message)s")
 ONLY_MESSAGE_LOG_FORMATTER = logging.Formatter("%(message)s")
@@ -55,23 +57,12 @@ ADC_NAME = "ADC"
 CAMERA_NAME = "Camera"
 GPS_NAME = "GPS"
 
-"""
-        PATHs now set in set_home_path as directory creation might be needed
-"""
-
-GSM_LOG_PATH = None
-ADC_LOG_PATH = None
-CAMERA_LOG_PATH = None
-GPS_LOG_PATH = None
-MAIN_LOG_PATH = None
 
 DEBUG_LOG_PATH = "debug.log"
 INFO_LOG_PATH = "info.log"
 WARNING_LOG_PATH = "warning.log"
 RAW_LOG_PATH = "raw.log"
 
-CAMERA_CAPTURE_PATH = None
-CAMERA_VIDEO_PATH = None
 
 #@@@@@@@@@@@@@@ SMS AND GSM RELATED @@@@@@@@@@@@@@
 
@@ -195,6 +186,27 @@ CAMERA_CAPTURE_FILE_NAME_FORMAT = '{timestamp:%H%M%S}-{counter:003d}.png'
 
 CAMERA_LOW_ALTITUDE_LIMIT = 15000
 
+
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ MISSION DATA DIRECTORY CREATION @@@@@@@@@@@@@@@
+
+# More practical to put it here for reasons
+
+i = 0
+while os.path.isdir(HOME_PATH):
+    while HOME_PATH[ len(HOME_PATH) - 1 ].isdigit() or HOME_PATH[ len(HOME_PATH) - 1] == "/":
+        HOME_PATH = HOME_PATH[:len(HOME_PATH) - 1]
+    HOME_PATH += str(i) + "/"
+    i+=1
+
+GSM_LOG_PATH = HOME_PATH + GSM_NAME + '/'
+ADC_LOG_PATH = HOME_PATH + ADC_NAME + '/'
+CAMERA_LOG_PATH = HOME_PATH + CAMERA_NAME + '/'
+GPS_LOG_PATH = HOME_PATH + GPS_NAME + '/'
+MAIN_LOG_PATH = HOME_PATH + MAIN_LOG_NAME + '/'
+
+CAMERA_CAPTURE_PATH = CAMERA_LOG_PATH + "Captures/"
+CAMERA_VIDEO_PATH = CAMERA_LOG_PATH + "Videos/"
 
 
 
