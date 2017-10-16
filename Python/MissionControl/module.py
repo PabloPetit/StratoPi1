@@ -45,6 +45,9 @@ class Module( Thread ):
 
     def setup_logger(self):
 
+
+        print( self.sLogPath )
+
         if not os.path.isdir(self.sLogPath):
             os.makedirs(self.sLogPath)
 

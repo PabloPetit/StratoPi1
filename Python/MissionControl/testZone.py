@@ -11,14 +11,11 @@ from gsm_module import *
 
 i = 1
 
-print("BASE : "+HOME_PATH)
 
 while os.path.isdir(HOME_PATH):
     while HOME_PATH[ len(HOME_PATH) - 1 ].isdigit() or HOME_PATH[ len(HOME_PATH) - 1] == "/":
         HOME_PATH = HOME_PATH[:len(HOME_PATH) - 1]
-        print( HOME_PATH)
     HOME_PATH += str(i) + "/"
-    print(HOME_PATH)
     i+=1
 
 GSM_LOG_PATH = HOME_PATH + GSM_NAME + '/'
@@ -30,7 +27,6 @@ MAIN_LOG_PATH = HOME_PATH + MAIN_LOG_NAME + '/'
 CAMERA_CAPTURE_PATH = CAMERA_LOG_PATH + "Captures/"
 CAMERA_VIDEO_PATH = CAMERA_LOG_PATH + "Videos/"
 
-print("Final : "+HOME_PATH)
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
 
