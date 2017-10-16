@@ -11,6 +11,7 @@ from gsm_module import *
 
 i = 1
 
+global HOME_PATH, GSM_LOG_PATH, ADC_LOG_PATH, CAMERA_LOG_PATH, GPS_LOG_PATH, MAIN_LOG_PATH, CAMERA_CAPTURE_PATH, CAMERA_VIDEO_PATH
 
 while os.path.isdir(HOME_PATH):
     while HOME_PATH[ len(HOME_PATH) - 1 ].isdigit() or HOME_PATH[ len(HOME_PATH) - 1] == "/":
