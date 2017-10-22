@@ -37,7 +37,7 @@ class GsmModule( UartModule ):
         super(GsmModule, self).setup()
         self.at_check()
         self.set_CMGF_state()
-        self.close_net_light()
+        #self.close_net_light()
 
     def create_periodical_checks(self):
         self.add_periodical_checks(AT_STATE, ATState(self.at_check, AT_REFRESH_TIMEOUT, AT_STATE))
