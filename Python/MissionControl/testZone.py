@@ -1,5 +1,7 @@
 print("Starting tests")
 
+from tendo import singleton
+main = singleton.SingleInstance()
 
 from config import *
 
@@ -8,6 +10,9 @@ from gps_module import *
 from camera_module import *
 from adc_module import *
 from gsm_module import *
+
+
+
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
